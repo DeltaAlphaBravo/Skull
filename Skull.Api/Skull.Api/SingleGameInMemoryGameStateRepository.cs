@@ -1,6 +1,6 @@
-﻿using SkullApi.Models.Internal.GamesState;
+﻿using Skull.GamesState;
 
-namespace SkullApi
+namespace Skull.Api
 {
     public class SingleGameInMemoryGameStateRepository : IGameStateRepository
     {

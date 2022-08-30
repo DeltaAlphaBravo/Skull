@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Skull.Api", "Skull.Api\Skul
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Skull.Api.Tests", "Skull.Api.Tests\Skull.Api.Tests.csproj", "{F4B6C3DF-5320-4F16-B5DA-A0A48006880A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Skull", "..\Skull\Skull\Skull.csproj", "{991479E0-FA4A-4B5A-BF8F-FAFFAC890F87}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{F4B6C3DF-5320-4F16-B5DA-A0A48006880A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F4B6C3DF-5320-4F16-B5DA-A0A48006880A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F4B6C3DF-5320-4F16-B5DA-A0A48006880A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{991479E0-FA4A-4B5A-BF8F-FAFFAC890F87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{991479E0-FA4A-4B5A-BF8F-FAFFAC890F87}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{991479E0-FA4A-4B5A-BF8F-FAFFAC890F87}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{991479E0-FA4A-4B5A-BF8F-FAFFAC890F87}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

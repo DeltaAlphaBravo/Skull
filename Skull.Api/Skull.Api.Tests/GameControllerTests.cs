@@ -1,13 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SkullApi.Controllers;
-using SkullApi.Models.External;
-using SkullApi.Models.Internal;
-using SkullApi.Models.Internal.GamesState;
+using Skull.Api.Controllers;
+using Skull.Api.Models;
+using Skull.GamesState;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SkullApi.Tests
+namespace Skull.Api.Tests
 {
     [TestClass]
     public class GameControllerTests
@@ -35,7 +34,7 @@ namespace SkullApi.Tests
 
             var gameState = await new GameController(skullGame).CreateNewGameAsync(3);
             var target = new PlayerController(skullGame);
-            var actingPlayer = gameState.PlayerWithOnus;
+            var actingPlayer = gameState.NextPlayer;
 
             //Act
             var playerView = GetGamePlayerView(await target.PlaceCoasterAsync(gameState.Name, actingPlayer, true));
@@ -56,8 +55,9 @@ namespace SkullApi.Tests
             var gameState = await new GameController(skullGame).CreateNewGameAsync(3);
             var target = new PlayerController(skullGame);
 
-            for (int i = 0; i < 3; i++) await target.PlaceCoasterAsync(gameState.Name, i, false);
-            var challengingPlayer = gameState.PlayerWithOnus;
+            var firstPlayer = gameState.NextPlayer;
+            for (int i = firstPlayer; i < firstPlayer + 3; i++) await target.PlaceCoasterAsync(gameState.Name, i % 3, false);
+            var challengingPlayer = gameState.NextPlayer;
 
             //Act
             var currentPlayer = GetGamePlayerView(await target.MakeBidAsync(gameState.Name, challengingPlayer, 1))!.PlayerWithOnus;
@@ -79,7 +79,7 @@ namespace SkullApi.Tests
             var gameState = await new GameController(skullGame).CreateNewGameAsync(3);
             var target = new PlayerController(skullGame);
 
-            var firstPlayer = gameState.PlayerWithOnus;
+            var firstPlayer = gameState.NextPlayer;
             for (int i = firstPlayer; i < firstPlayer + 3; i++) await target.PlaceCoasterAsync(gameState.Name, i % 3, false);
             for (int i = firstPlayer; i < firstPlayer + 3; i++) await target.PlaceCoasterAsync(gameState.Name, i % 3, true);
 
@@ -90,7 +90,7 @@ namespace SkullApi.Tests
             Assert.AreEqual(Phase.Reveal, (await repository.GetGameStateAsync(gameState.Name))!.Phase);
         }
 
-        private static IGamePlayerView? GetGamePlayerView(ActionResult<IGamePlayerView> actionResult) 
+        private static IGamePlayerView? GetGamePlayerView(ActionResult<IGamePlayerView> actionResult)
             => (actionResult.Result as OkObjectResult)?.Value as IGamePlayerView;
     }
 }

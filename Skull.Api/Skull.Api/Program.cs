@@ -1,4 +1,5 @@
-using SkullApi;
+using Skull;
+using Skull.Api;
 
 var builder = WebApplication.CreateBuilder(args);
 

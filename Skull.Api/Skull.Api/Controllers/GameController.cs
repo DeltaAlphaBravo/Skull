@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SkullApi.Models.Internal;
-using SkullApi.Models.Internal.GamesState;
+using Skull.GamesState;
 
-namespace SkullApi.Controllers;
+namespace Skull.Api.Controllers;
 
 [ApiController]
 public class GameController : ControllerBase

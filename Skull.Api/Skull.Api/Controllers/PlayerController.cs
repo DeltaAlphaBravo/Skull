@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SkullApi.Models.External;
-using SkullApi.Models.Internal;
+using Skull.Api.Models;
 
-namespace SkullApi.Controllers
+namespace Skull.Api.Controllers
 {
     [ApiController]
     public class PlayerController : ControllerBase
@@ -12,7 +11,7 @@ namespace SkullApi.Controllers
         public PlayerController(ISkullGame skullGame) => _skullGame = skullGame;
 
         [HttpGet]
-        [Route("api/game/{game}/{player}/view")]
+        [Route("api/game/{game}/player/{player}/view")]
         public async Task<ActionResult<IGamePlayerView>> GetGamePlayerViewAsync([FromRoute] string game, [FromRoute] int player)
         {
             var gameState = await _skullGame.GetGameStateAsync(game);
@@ -22,7 +21,7 @@ namespace SkullApi.Controllers
         }
 
         [HttpPost]
-        [Route("api/game/{game}/{player}/stack")]
+        [Route("api/game/{game}/player/{player}/stack")]
         public async Task<ActionResult<IGamePlayerView>> PlaceCoasterAsync([FromRoute] string game, [FromRoute] int player, [FromBody] bool isSkull)
         {
             try
@@ -38,7 +37,7 @@ namespace SkullApi.Controllers
         }
 
         [HttpPost]
-        [Route("api/game/{game}/{player}/challenge")]
+        [Route("api/game/{game}/player/{player}/challenge")]
         public async Task<ActionResult<IGamePlayerView>> MakeBidAsync([FromRoute] string game, [FromRoute] int player, [FromBody] int? bid)
         {
             try
