@@ -10,6 +10,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IGameStateRepository, SingleGameInMemoryGameStateRepository>();
+builder.Services.AddTransient<ISkullGame, SkullGame>();
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
