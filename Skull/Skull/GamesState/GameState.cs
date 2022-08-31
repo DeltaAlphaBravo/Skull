@@ -17,7 +17,7 @@ internal sealed class GameState : IGameState
         Name = name;
         Players = players;
         Bids = new Stack<IBid>();
-        Phase = Phase.Placement;
+        Phase = Phase.Creation;
         NextPlayer = Random.Shared.Next(players.Count - 1);
     }
 
@@ -33,12 +33,14 @@ internal sealed class GameState : IGameState
         if (Phase == Phase.Reveal) Phase = Phase.Complete;
         if (Phase == Phase.Challenge) Phase = Phase.Reveal;
         if (Phase == Phase.Placement) Phase = Phase.Challenge;
+        if (Phase == Phase.Creation) Phase = Phase.Placement;
         return Phase;
     }
 
     public IPlayerState JoinPlayer(string name)
     {
-        var newPlayerId = Players.Count;
+        var newPlayerId = Players.Where(p => p.PlayerIdentity == null)
+                                 .Min(p => p.PlayerId);
         Players[newPlayerId].AttachIdentity(name);
         return Players[newPlayerId].PlayerState;
     }

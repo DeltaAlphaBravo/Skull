@@ -12,11 +12,11 @@ namespace Skull.Api.Controllers
 
         [HttpPost]
         [Route("api/game/{game}/player")]
-        public async Task<ActionResult<IGamePlayerView>> AddPlayer([FromRoute] string game)
+        public async Task<ActionResult<IGamePlayerView>> JoinPlayer([FromRoute] string game, [FromBody] string playerName)
         {
-            var gameState = await _skullGame.AddPlayer(game);
+            var gameState = await _skullGame.JoinPlayer(playerName);
             if (gameState == null) return new NotFoundResult();
-            var view = new OkObjectResult(new GamePlayerView(gameState, gameState.Players.Count));
+            var view = new OkObjectResult(new GamePlayerView(gameState, gameState.Players.Last(p => p.PlayerIdentity?.Name == playerName).PlayerId));
             return view;
         }
 

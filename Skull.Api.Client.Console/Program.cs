@@ -15,13 +15,13 @@ var client = new RestClient($"{baseUrl}");
 var request = new RestRequest
 {
     Method = Method.Post,
-    Resource = "https://localhost:7174/api/game",
+    Resource = "api/game",
 };
 
-request.AddBody(3).AddHeader("accept", "text/plain");
+request.AddBody(3);
 
-var response = await client.GetAsync(request);
+var response = await client.PostAsync(request);
 
-Console.WriteLine(JsonSerializer.Serialize(response));
+Console.WriteLine(response.Content);
 
 await host.RunAsync();

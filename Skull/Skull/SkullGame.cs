@@ -19,13 +19,14 @@ namespace Skull
             return newGame;
         }
 
-        public async Task<IGameState?> AddPlayer(string game)
+        public async Task<IGameState?> JoinPlayer(string game)
         {
             var gameState = await _repository.GetGameStateAsync(game);
             if (gameState == null) return null;
             if (gameState.Phase == Phase.Creation)
             {
                 gameState = CreationPhase.CreateFromState(gameState).JoinPlayer(game);
+                if (gameState.Players.All(p => p.PlayerIdentity != null)) gameState.GoToNextPhase();
                 await _repository.SaveGameStatusAsync(gameState);
                 return gameState;
             }
@@ -48,7 +49,7 @@ namespace Skull
                 await _repository.SaveGameStatusAsync(gameState);
                 return gameState;
             }
-            return null;
+            throw new Exceptions.WrongPhaseException();
         }
 
         public async Task<IGameState?> MakeBidAsync(string name, int player, int? cardsToReveal)
@@ -64,7 +65,7 @@ namespace Skull
                 await _repository.SaveGameStatusAsync(gameState);
                 return gameState;
             }
-            return null;
+            throw new Exceptions.WrongPhaseException();
         }
 
         private static void PossiblyGoToNextPhase(int? cardsToReveal, IGameState gameState)
