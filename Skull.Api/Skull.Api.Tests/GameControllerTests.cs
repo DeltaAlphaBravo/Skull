@@ -60,10 +60,10 @@ namespace Skull.Api.Tests
             var challengingPlayer = gameState.NextPlayer;
 
             //Act
-            var currentPlayer = GetGamePlayerView(await target.MakeBidAsync(gameState.Name, challengingPlayer, 1))!.PlayerWithOnus;
-            var challengeHighBidPlayer = GetGamePlayerView(await target.MakeBidAsync(gameState.Name, currentPlayer, null))!.PlayerWithOnus;
-            currentPlayer = GetGamePlayerView(await target.MakeBidAsync(gameState.Name, challengeHighBidPlayer, 2))!.PlayerWithOnus;
-            currentPlayer = GetGamePlayerView(await target.MakeBidAsync(gameState.Name, currentPlayer, null))!.PlayerWithOnus;
+            var currentPlayer = GetGamePlayerView(await target.MakeBidAsync(gameState.Name, challengingPlayer, 1))!.NextPlayer;
+            var challengeHighBidPlayer = GetGamePlayerView(await target.MakeBidAsync(gameState.Name, currentPlayer, null))!.NextPlayer;
+            currentPlayer = GetGamePlayerView(await target.MakeBidAsync(gameState.Name, challengeHighBidPlayer, 2))!.NextPlayer;
+            currentPlayer = GetGamePlayerView(await target.MakeBidAsync(gameState.Name, currentPlayer, null))!.NextPlayer;
 
             //Assert
             Assert.AreEqual(challengeHighBidPlayer, currentPlayer);
@@ -84,7 +84,7 @@ namespace Skull.Api.Tests
             for (int i = firstPlayer; i < firstPlayer + 3; i++) await target.PlaceCoasterAsync(gameState.Name, i % 3, true);
 
             //Act
-            var currentPlayer = GetGamePlayerView(await target.MakeBidAsync(gameState.Name, firstPlayer, 6))!.PlayerWithOnus;
+            var currentPlayer = GetGamePlayerView(await target.MakeBidAsync(gameState.Name, firstPlayer, 6))!.NextPlayer;
 
             //Assert
             Assert.AreEqual(Phase.Reveal, (await repository.GetGameStateAsync(gameState.Name))!.Phase);

@@ -2,6 +2,7 @@
 {
     public enum Phase
     {
+        Creation,
         Placement,
         Challenge,
         Reveal,

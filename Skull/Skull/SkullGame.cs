@@ -14,9 +14,22 @@ namespace Skull
 
         public async Task<IGameState> CreateGameAsync(int playerCount)
         {
-            var newGame = new PlacementPhase(playerCount);
-            await _repository.SaveGameStatusAsync(newGame.GameState);
-            return newGame.GameState;
+            var newGame = CreationPhase.StartGame("Booyah", playerCount);
+            await _repository.SaveGameStatusAsync(newGame);
+            return newGame;
+        }
+
+        public async Task<IGameState?> AddPlayer(string game)
+        {
+            var gameState = await _repository.GetGameStateAsync(game);
+            if (gameState == null) return null;
+            if (gameState.Phase == Phase.Creation)
+            {
+                gameState = CreationPhase.CreateFromState(gameState).JoinPlayer(game);
+                await _repository.SaveGameStatusAsync(gameState);
+                return gameState;
+            }
+            throw new Exceptions.WrongPhaseException();
         }
 
         public async Task<IGameState?> GetGameStateAsync(string name)
@@ -56,8 +69,9 @@ namespace Skull
 
         private static void PossiblyGoToNextPhase(int? cardsToReveal, IGameState gameState)
         {
+            int totalPlayedCoasters = gameState.Players.SelectMany(p => p.PlayerState.PlayedCoasters).Count();
+            var isMaxPossibleBidPlaced = cardsToReveal > 0 && cardsToReveal == totalPlayedCoasters;
             var isOnlyOnePlayerNotPassing = gameState.Bids.Count(b => b.CardsToReveal == null) == gameState.Players.Count() - 1;
-            var isMaxPossibleBidPlaced = cardsToReveal > 0 && cardsToReveal == gameState.Players.SelectMany(p => p.PlayedCoasters).Count();
             if (isOnlyOnePlayerNotPassing || isMaxPossibleBidPlaced) gameState.GoToNextPhase();
         }
     }

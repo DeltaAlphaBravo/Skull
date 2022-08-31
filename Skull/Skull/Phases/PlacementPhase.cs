@@ -7,15 +7,6 @@ internal sealed class PlacementPhase : IPlacementPhase
 {
     public IGameState GameState { get; private init; }
 
-    public PlacementPhase(int playerCount)
-    {
-        if (playerCount is < 3 or > 6) throw new ArgumentException();
-        var players = Enumerable.Range(0, playerCount)
-                                .Select(y => new Player(y))
-                                .ToList<IPlayer>();
-        GameState = new GameState("Booyah", players);
-    }
-
     private PlacementPhase(IGameState gameState)
     {
         GameState = gameState;

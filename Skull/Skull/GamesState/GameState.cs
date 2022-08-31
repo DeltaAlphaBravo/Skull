@@ -6,13 +6,13 @@ internal sealed class GameState : IGameState
 
     public string Name { get; private init; }
 
-    public IList<IPlayer> Players { get; private init; }
+    public IReadOnlyList<IPlayer> Players { get; internal set; }
 
     public Phase Phase { get; private set; }
 
     public Stack<IBid> Bids { get; private init; }
 
-    public GameState(string name, IList<IPlayer> players)
+    public GameState(string name, IReadOnlyList<IPlayer> players)
     {
         Name = name;
         Players = players;
@@ -34,5 +34,12 @@ internal sealed class GameState : IGameState
         if (Phase == Phase.Challenge) Phase = Phase.Reveal;
         if (Phase == Phase.Placement) Phase = Phase.Challenge;
         return Phase;
+    }
+
+    public IPlayerState JoinPlayer(string name)
+    {
+        var newPlayerId = Players.Count;
+        Players[newPlayerId].AttachIdentity(name);
+        return Players[newPlayerId].PlayerState;
     }
 }

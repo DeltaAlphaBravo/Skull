@@ -10,6 +10,16 @@ namespace Skull.Api.Controllers
 
         public PlayerController(ISkullGame skullGame) => _skullGame = skullGame;
 
+        [HttpPost]
+        [Route("api/game/{game}/player")]
+        public async Task<ActionResult<IGamePlayerView>> AddPlayer([FromRoute] string game)
+        {
+            var gameState = await _skullGame.AddPlayer(game);
+            if (gameState == null) return new NotFoundResult();
+            var view = new OkObjectResult(new GamePlayerView(gameState, gameState.Players.Count));
+            return view;
+        }
+
         [HttpGet]
         [Route("api/game/{game}/player/{player}/view")]
         public async Task<ActionResult<IGamePlayerView>> GetGamePlayerViewAsync([FromRoute] string game, [FromRoute] int player)
