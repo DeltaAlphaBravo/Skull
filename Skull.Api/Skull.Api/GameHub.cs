@@ -4,9 +4,14 @@ namespace Skull.Api
 {
     public class GameHub : Hub
     {
-        public async Task SendMessage(string game, string user, string message)
+        public async Task AddToGroupAsync(string game)
         {
-            await Clients.Clients(new[] { "Booyah" }).SendAsync("ReceiveMessage", message);
+            await Groups.AddToGroupAsync(Context.ConnectionId, game);
+        }
+
+        public async Task SendMessageAsync(string game, string message)
+        {
+            await Clients.Group("Booyah").SendAsync("ReceiveMessage", message);
         }
     }
 }

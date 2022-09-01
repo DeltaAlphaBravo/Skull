@@ -7,8 +7,13 @@ namespace Skull.Api.Controllers
     public class PlayerController : ControllerBase
     {
         private readonly ISkullGame _skullGame;
+        private readonly GameHub _skullHub;
 
-        public PlayerController(ISkullGame skullGame) => _skullGame = skullGame;
+        public PlayerController(ISkullGame skullGame, GameHub skullHub)
+        {
+            _skullGame = skullGame;
+            _skullHub = skullHub;
+        }
 
         [HttpPost]
         [Route("api/game/{game}/player")]
@@ -16,6 +21,8 @@ namespace Skull.Api.Controllers
         {
             var gameState = await _skullGame.JoinPlayer(playerName);
             if (gameState == null) return new NotFoundResult();
+            await _skullHub.AddToGroupAsync(game);
+            await _skullHub.SendMessageAsync(game, $"{playerName} joined \"{game}\"");
             var view = new OkObjectResult(new GamePlayerView(gameState, gameState.Players.Last(p => p.PlayerIdentity?.Name == playerName).PlayerId));
             return view;
         }

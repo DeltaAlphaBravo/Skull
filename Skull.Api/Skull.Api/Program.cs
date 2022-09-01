@@ -12,6 +12,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IGameStateRepository, SingleGameInMemoryGameStateRepository>();
 builder.Services.AddTransient<ISkullGame, SkullGame>();
 builder.Services.AddSignalR();
+builder.Services.AddSingleton<GameHub>();
 
 var app = builder.Build();
 
