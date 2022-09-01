@@ -21,9 +21,10 @@ namespace Skull.Api.Controllers
         {
             var gameState = await _skullGame.JoinPlayer(playerName);
             if (gameState == null) return new NotFoundResult();
+            var playerId = gameState.Players.Last(p => p.PlayerIdentity?.Name == playerName).PlayerId;
             await _skullHub.AddToGroupAsync(game);
-            await _skullHub.SendMessageAsync(game, $"{playerName} joined \"{game}\"");
-            var view = new OkObjectResult(new GamePlayerView(gameState, gameState.Players.Last(p => p.PlayerIdentity?.Name == playerName).PlayerId));
+            await _skullHub.SendMessageAsync(game, $"{playerName} joined \"{game}\" as player {playerId}");
+            var view = new OkObjectResult(new GamePlayerView(gameState, playerId));
             return view;
         }
 

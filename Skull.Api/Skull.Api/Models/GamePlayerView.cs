@@ -35,8 +35,11 @@ namespace Skull.Api.Models
                                                       HasSkull = p.PlayerState.Hand.HasSkull,
                                                       PlayerId = p.PlayerState.Hand.PlayerId
                                                   };
-                                                  return new OpponentState(opponentHand)
+                                                  return new OpponentState(p.PlayerId, 
+                                                                           p.PlayerIdentity?.Name ?? "????", 
+                                                                           opponentHand)
                                                   {
+                                                      
                                                       StackCount = p.PlayerState.PlayedCoasters.Count(),
                                                       PlayerId = p.PlayerId
                                                   };
