@@ -12,7 +12,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IGameStateRepository, SingleGameInMemoryGameStateRepository>();
 builder.Services.AddTransient<ISkullGame, SkullGame>();
 builder.Services.AddSignalR();
-builder.Services.AddSingleton<GameHub>();
+builder.Services.AddSingleton<SkullHub>();
 
 var app = builder.Build();
 
@@ -29,6 +29,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.MapHub<GameHub>("/gameHub");
+app.MapHub<SkullHub>("/gameHub");
 
 app.Run();

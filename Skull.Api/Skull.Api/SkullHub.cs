@@ -2,7 +2,7 @@
 
 namespace Skull.Api
 {
-    public class GameHub : Hub
+    public class SkullHub : Hub, ISkullHub
     {
         public async Task AddToGroupAsync(string game)
         {

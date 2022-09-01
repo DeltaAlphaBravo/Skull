@@ -7,9 +7,9 @@ namespace Skull.Api.Controllers
     public class PlayerController : ControllerBase
     {
         private readonly ISkullGame _skullGame;
-        private readonly GameHub _skullHub;
+        private readonly ISkullHub _skullHub;
 
-        public PlayerController(ISkullGame skullGame, GameHub skullHub)
+        public PlayerController(ISkullGame skullGame, SkullHub skullHub)
         {
             _skullGame = skullGame;
             _skullHub = skullHub;
@@ -46,6 +46,8 @@ namespace Skull.Api.Controllers
             {
                 var gameState = await _skullGame.PlaceCoasterAsync(game, player, isSkull);
                 if (gameState == null) return new NotFoundResult();
+                await _skullHub.AddToGroupAsync(game);
+                await _skullHub.SendMessageAsync(game, $"player {player} played a coaster");
                 return new OkObjectResult(new GamePlayerView(gameState, player));
             }
             catch (InvalidOperationException)
@@ -62,6 +64,8 @@ namespace Skull.Api.Controllers
             {
                 var gameState = await _skullGame.MakeBidAsync(game, player, bid);
                 if (gameState == null) return new NotFoundResult();
+                await _skullHub.AddToGroupAsync(game);
+                await _skullHub.SendMessageAsync(game, $"player {player} challenged with {bid} coasters");
                 return new OkObjectResult(new GamePlayerView(gameState, player));
             }
             catch (InvalidOperationException)

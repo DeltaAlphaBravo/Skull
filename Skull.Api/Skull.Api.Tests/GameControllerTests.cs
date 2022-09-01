@@ -33,7 +33,7 @@ namespace Skull.Api.Tests
             var skullGame = new SkullGame(new SingleGameInMemoryGameStateRepository());
 
             var gameState = await new GameController(skullGame).CreateNewGameAsync(3);
-            var target = new PlayerController(skullGame, new GameHub());
+            var target = new PlayerController(skullGame, new SkullHub());
             for (int i = 0; i < 3; i++) await target.JoinPlayer(gameState.Name, i.ToString());
             var actingPlayer = gameState.NextPlayer;
 
@@ -54,7 +54,7 @@ namespace Skull.Api.Tests
             var repository = new SingleGameInMemoryGameStateRepository();
             var skullGame = new SkullGame(repository);
             var gameState = await new GameController(skullGame).CreateNewGameAsync(3);
-            var target = new PlayerController(skullGame, new GameHub());
+            var target = new PlayerController(skullGame, new SkullHub());
             for (int i = 0; i < 3; i++) await target.JoinPlayer(gameState.Name, i.ToString());
 
             var firstPlayer = gameState.NextPlayer;
@@ -80,7 +80,7 @@ namespace Skull.Api.Tests
             var skullGame = new SkullGame(repository);
             var gameState = await new GameController(skullGame).CreateNewGameAsync(3);
             
-            var target = new PlayerController(skullGame, new GameHub());
+            var target = new PlayerController(skullGame, new SkullHub());
             for (int i = 0; i < 3; i++) await target.JoinPlayer(gameState.Name, i.ToString());
 
             var firstPlayer = gameState.NextPlayer;
