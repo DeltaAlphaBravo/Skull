@@ -23,7 +23,7 @@ jobs:
           include-prerelease: true
 
       - name: Build with dotnet
-        run: dotnet build Skull.Api/Skull.Api.sln --configuration Release
+        run: dotnet build Skull.Api.sln --configuration Release
 
       - name: dotnet publish
         run: dotnet publish Skull.Api/Skull.Api.sln -c Release -o ${{env.DOTNET_ROOT}}/myapp
