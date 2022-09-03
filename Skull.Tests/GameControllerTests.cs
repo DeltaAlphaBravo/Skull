@@ -27,10 +27,7 @@ namespace Skull.Api.Tests
         public async Task GivenPlacementPhaseAndPlayerHasSkull_WhenPlayerPlaysSkull_ThenSkullMovedToStack()
         {
             //Arrange
-            var target = new SkullGame(new SingleGameInMemoryGameStateRepository());
-
-            var gameState = await target.CreateGameAsync(3);
-            for (int i = 0; i < 3; i++) await target.JoinPlayer(gameState.Name, i.ToString(), false);
+            var (target, gameState) = await CreateNPlayerGame(3);
             var actingPlayer = gameState.NextPlayer;
 
             //Act
@@ -49,9 +46,7 @@ namespace Skull.Api.Tests
         {
             //Arrange
             var repository = new SingleGameInMemoryGameStateRepository();
-            var target = new SkullGame(repository);
-            var gameState = await target.CreateGameAsync(3);
-            for (int i = 0; i < 3; i++) await target.JoinPlayer(gameState.Name, i.ToString(), true);
+            var (target, gameState) = await CreateNPlayerGame(3, repository);
 
             var firstPlayer = gameState.NextPlayer;
             for (int i = firstPlayer; i < firstPlayer + 3; i++) await target.PlaceCoasterAsync(gameState.Name, i % 3, false);
@@ -73,10 +68,7 @@ namespace Skull.Api.Tests
         {
             //Arrange
             var repository = new SingleGameInMemoryGameStateRepository();
-            var target = new SkullGame(repository);
-            var gameState = await target.CreateGameAsync(3);
-
-            for (int i = 0; i < 3; i++) await target.JoinPlayer(gameState.Name, i.ToString(), false);
+            var (target, gameState) = await CreateNPlayerGame(3, repository);
 
             var firstPlayer = gameState.NextPlayer;
             for (int i = firstPlayer; i < firstPlayer + 3; i++) await target.PlaceCoasterAsync(gameState.Name, i % 3, false);
@@ -87,6 +79,19 @@ namespace Skull.Api.Tests
 
             //Assert
             Assert.AreEqual(Phase.Reveal, (await repository.GetGameStateAsync(gameState.Name))!.Phase);
+        }
+
+        private static async Task<(SkullGame, IGameState)> CreateNPlayerGame(int n, IGameStateRepository gameStateRepository)
+        {
+            var target = new SkullGame(gameStateRepository);
+            var gameState = await target.CreateGameAsync(n);
+            for (int i = 0; i < n; i++) await target.JoinPlayer(gameState.Name, i.ToString(), false);
+            return (target, gameState);
+        }
+
+        private static async Task<(SkullGame, IGameState)> CreateNPlayerGame(int n)
+        {
+            return await CreateNPlayerGame(n, new SingleGameInMemoryGameStateRepository());
         }
     }
 }
