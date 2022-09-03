@@ -37,11 +37,11 @@ internal sealed class GameState : IGameState
         return Phase;
     }
 
-    public IPlayerState JoinPlayer(string name)
+    public int JoinPlayer(string name)
     {
         var newPlayerId = Players.Where(p => p.PlayerIdentity == null)
                                  .Min(p => p.PlayerId);
         Players[newPlayerId].AttachIdentity(name);
-        return Players[newPlayerId].PlayerState;
+        return newPlayerId;
     }
 }

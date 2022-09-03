@@ -9,6 +9,6 @@
         Stack<IBid> Bids { get; }
         int GoToNextPlayer();
         Phase GoToNextPhase();
-        IPlayerState JoinPlayer(string name);
+        int JoinPlayer(string name);
     }
 }

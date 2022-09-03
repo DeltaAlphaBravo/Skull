@@ -11,7 +11,7 @@ namespace Skull.Api
 
         public async Task SendMessageAsync(string game, string message)
         {
-            await Clients.Group("Booyah").SendAsync("ReceiveMessage", message);
+            await Clients.Group(game).SendAsync("ReceiveMessage", message);
         }
     }
 }

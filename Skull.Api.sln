@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32421.90
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Skull.Api", "Skull.Api\Skull.Api.csproj", "{657F7701-ECA5-4993-A997-DF3390192CAA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Skull", "Skull\Skull.csproj", "{991479E0-FA4A-4B5A-BF8F-FAFFAC890F87}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Skull.Api.Tests", "Skull.Api.Tests\Skull.Api.Tests.csproj", "{F4B6C3DF-5320-4F16-B5DA-A0A48006880A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Skull.Api.Client.Console", "Skull.Api.Client.Console\Skull.Api.Client.Console.csproj", "{712AB1F2-3B60-4D6E-9264-507443C77472}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Skull", "..\Skull\Skull\Skull.csproj", "{991479E0-FA4A-4B5A-BF8F-FAFFAC890F87}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Skull.Tests", "Skull.Tests\Skull.Tests.csproj", "{D9F85F17-560B-4E13-90E7-575A172C0544}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Skull.Api.Client.Console", "..\Skull.Api.Client.Console\Skull.Api.Client.Console.csproj", "{712AB1F2-3B60-4D6E-9264-507443C77472}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Skull.Api", "Skull.Api\Skull.Api.csproj", "{E8989B7D-6C59-48E6-BFAB-0E3D2DF8219C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,14 +17,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{657F7701-ECA5-4993-A997-DF3390192CAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{657F7701-ECA5-4993-A997-DF3390192CAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{657F7701-ECA5-4993-A997-DF3390192CAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{657F7701-ECA5-4993-A997-DF3390192CAA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F4B6C3DF-5320-4F16-B5DA-A0A48006880A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F4B6C3DF-5320-4F16-B5DA-A0A48006880A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F4B6C3DF-5320-4F16-B5DA-A0A48006880A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F4B6C3DF-5320-4F16-B5DA-A0A48006880A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{991479E0-FA4A-4B5A-BF8F-FAFFAC890F87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{991479E0-FA4A-4B5A-BF8F-FAFFAC890F87}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{991479E0-FA4A-4B5A-BF8F-FAFFAC890F87}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -33,6 +25,14 @@ Global
 		{712AB1F2-3B60-4D6E-9264-507443C77472}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{712AB1F2-3B60-4D6E-9264-507443C77472}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{712AB1F2-3B60-4D6E-9264-507443C77472}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9F85F17-560B-4E13-90E7-575A172C0544}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9F85F17-560B-4E13-90E7-575A172C0544}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9F85F17-560B-4E13-90E7-575A172C0544}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9F85F17-560B-4E13-90E7-575A172C0544}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8989B7D-6C59-48E6-BFAB-0E3D2DF8219C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8989B7D-6C59-48E6-BFAB-0E3D2DF8219C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8989B7D-6C59-48E6-BFAB-0E3D2DF8219C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8989B7D-6C59-48E6-BFAB-0E3D2DF8219C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

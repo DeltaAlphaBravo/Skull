@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Skull.Api\Skull.Api.csproj" />
+    <ProjectReference Include="..\Skull\Skull.csproj" />
   </ItemGroup>
 
 </Project>

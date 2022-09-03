@@ -19,13 +19,14 @@ namespace Skull
             return newGame;
         }
 
-        public async Task<IGameState?> JoinPlayer(string game)
+        public async Task<IGameState?> JoinPlayer(string game, string playerName, bool isSkull)
         {
             var gameState = await _repository.GetGameStateAsync(game);
             if (gameState == null) return null;
             if (gameState.Phase == Phase.Creation)
             {
-                gameState = CreationPhase.CreateFromState(gameState).JoinPlayer(game);
+                var creationPhase = CreationPhase.CreateFromState(gameState);
+                gameState = creationPhase.PlaceFirstCoaster(creationPhase.JoinPlayer(playerName), isSkull);
                 if (gameState.Players.All(p => p.PlayerIdentity != null)) gameState.GoToNextPhase();
                 await _repository.SaveGameStatusAsync(gameState);
                 return gameState;
@@ -38,14 +39,14 @@ namespace Skull
             return await _repository.GetGameStateAsync(name);
         }
 
-        public async Task<IGameState?> PlaceCoasterAsync(string name, int player, bool isSkull)
+        public async Task<IGameState?> PlaceCoasterAsync(string game, int player, bool isSkull)
         {
-            var gameState = await _repository.GetGameStateAsync(name);
+            var gameState = await _repository.GetGameStateAsync(game);
             if (gameState == null) return null;
             if (gameState.Phase == Phase.Placement)
             {
-                var game = PlacementPhase.CreateFromState(gameState);
-                gameState = game.PlaceCoaster(player, isSkull);
+                var placementPhase = PlacementPhase.CreateFromState(gameState);
+                gameState = placementPhase.PlaceCoaster(player, isSkull);
                 await _repository.SaveGameStatusAsync(gameState);
                 return gameState;
             }

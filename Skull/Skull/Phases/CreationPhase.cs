@@ -20,9 +20,18 @@ namespace Skull.Phases
             return gameState;
         }
 
-        public IGameState JoinPlayer(string name)
+        public int JoinPlayer(string name)
         {
-            GameState.JoinPlayer(name);
+            return GameState.JoinPlayer(name);
+        }
+
+        public IGameState PlaceFirstCoaster(int player, bool isSkull)
+        {
+            var playerState = isSkull switch
+            {
+                true => GameState.Players.Single(p => p.PlayerId == player).PlaySkull(),
+                false => GameState.Players.Single(p => p.PlayerId == player).PlayFlower()
+            };
             return GameState;
         }
 

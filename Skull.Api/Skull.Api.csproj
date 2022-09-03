@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Skull\Skull\Skull.csproj" />
+    <ProjectReference Include="..\Skull\Skull.csproj" />
   </ItemGroup>
 
 </Project>
