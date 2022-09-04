@@ -19,20 +19,15 @@ export class Client {
     }
 
     /**
-     * @param body (optional) 
      * @return Success
      */
-    game(body: number | undefined): Promise<IGameState> {
+    game(): Promise<IGameState> {
         let url_ = this.baseUrl + "/api/game";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(body);
-
         let options_: RequestInit = {
-            body: content_,
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
                 "Accept": "text/plain"
             }
         };

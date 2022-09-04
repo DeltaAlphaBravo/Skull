@@ -13,7 +13,7 @@ public class GameController : ControllerBase
 
     [HttpPost]
     [Route("api/game")]
-    public async Task<IGameState> CreateNewGameAsync([FromBody] int playerCount)
+    public async Task<IGameState> CreateNewGameAsync()
     {
         return await _skullGame.CreateGameAsync();
     }
