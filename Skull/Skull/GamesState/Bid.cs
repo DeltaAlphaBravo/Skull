@@ -1,4 +1,6 @@
-﻿namespace Skull.GamesState
+﻿using Skull.Skull.GamesState.GamePlay;
+
+namespace Skull.Skull.GamesState
 {
     internal class Bid : IBid
     {

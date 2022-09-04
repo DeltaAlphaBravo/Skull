@@ -1,6 +1,7 @@
-﻿using Skull.GamesState;
+﻿using Skull.Skull.GamesState;
+using Skull.Skull.GamesState.Player;
 
-namespace Skull.Phases
+namespace Skull.Skull.Phases
 {
     internal sealed class CreationPhase : ICreationPhase
     {
@@ -10,13 +11,9 @@ namespace Skull.Phases
             GameState = gameState;
         }
 
-        public static IGameState StartGame(string name, int playerCount)
+        public static IGameState StartGame(string name)
         {
-            if (playerCount is < 3 or > 6) throw new ArgumentException();
-            var players = Enumerable.Range(0, playerCount)
-                                    .Select(y => new Player(y))
-                                    .ToList<IPlayer>();
-            var gameState = new GameState("Booyah", players);
+            var gameState = new GameState("Booyah");
             return gameState;
         }
 

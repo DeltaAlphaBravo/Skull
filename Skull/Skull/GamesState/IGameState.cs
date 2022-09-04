@@ -1,4 +1,7 @@
-﻿namespace Skull.GamesState
+﻿using Skull.Skull.GamesState.GamePlay;
+using Skull.Skull.GamesState.Player;
+
+namespace Skull.Skull.GamesState
 {
     public interface IGameState
     {

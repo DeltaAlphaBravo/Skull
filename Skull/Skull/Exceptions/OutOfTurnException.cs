@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace Skull.Exceptions
+namespace Skull.Skull.Exceptions
 {
     [Serializable]
     internal class OutOfTurnException : Exception

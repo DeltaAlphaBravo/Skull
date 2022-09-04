@@ -1,6 +1,6 @@
-﻿using Skull.GamesState;
+﻿using Skull.Skull.GamesState;
 
-namespace Skull.Phases
+namespace Skull.Skull.Phases
 {
     internal interface IPlacementPhase
     {

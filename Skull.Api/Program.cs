@@ -1,5 +1,5 @@
-using Skull;
 using Skull.Api;
+using Skull.Skull;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +21,10 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    app.UseCors(c => c.AllowAnyOrigin());
+    app.UseCors(c => {
+        c.AllowAnyOrigin();
+        c.WithHeaders("content-type");
+    });
 }
 
 app.UseHttpsRedirection();

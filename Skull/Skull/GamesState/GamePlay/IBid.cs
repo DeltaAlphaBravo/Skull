@@ -1,4 +1,4 @@
-﻿namespace Skull.GamesState
+﻿namespace Skull.Skull.GamesState.GamePlay
 {
     public interface IBid
     {

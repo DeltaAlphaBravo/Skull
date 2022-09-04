@@ -1,24 +1,28 @@
-﻿namespace Skull.GamesState;
+﻿using Skull.Skull.GamesState.GamePlay;
+using Skull.Skull.GamesState.Player;
+
+namespace Skull.Skull.GamesState;
 
 internal sealed class GameState : IGameState
 {
+    private readonly IList<IPlayer> _players;
     public int NextPlayer { get; private set; }
 
     public string Name { get; private init; }
 
-    public IReadOnlyList<IPlayer> Players { get; internal set; }
+    public IReadOnlyList<IPlayer> Players { get => (IReadOnlyList<IPlayer>)_players; }
 
     public Phase Phase { get; private set; }
 
     public Stack<IBid> Bids { get; private init; }
 
-    public GameState(string name, IReadOnlyList<IPlayer> players)
+    public GameState(string name)
     {
         Name = name;
-        Players = players;
+        _players = new List<IPlayer>();
         Bids = new Stack<IBid>();
         Phase = Phase.Creation;
-        NextPlayer = Random.Shared.Next(players.Count - 1);
+        NextPlayer = Random.Shared.Next(_players.Count - 1);
     }
 
     public int GoToNextPlayer()
@@ -39,9 +43,10 @@ internal sealed class GameState : IGameState
 
     public int JoinPlayer(string name)
     {
-        var newPlayerId = Players.Where(p => p.PlayerIdentity == null)
-                                 .Min(p => p.PlayerId);
-        Players[newPlayerId].AttachIdentity(name);
-        return newPlayerId;
+        var playerId = _players.Count;
+        var player = new Player.Player(playerId);
+        player.AttachIdentity(name);
+        _players.Add(player);
+        return playerId;
     }
 }

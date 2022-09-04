@@ -1,10 +1,10 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Skull.GamesState;
-using Skull.Tests;
+using Skull.Skull;
+using Skull.Skull.GamesState;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Skull.Api.Tests
+namespace Skull.Tests
 {
     [TestClass]
     public class SkullGameTests

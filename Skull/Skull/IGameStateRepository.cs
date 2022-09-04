@@ -1,6 +1,6 @@
-﻿using Skull.GamesState;
+﻿using Skull.Skull.GamesState;
 
-namespace Skull
+namespace Skull.Skull
 {
     public interface IGameStateRepository
     {

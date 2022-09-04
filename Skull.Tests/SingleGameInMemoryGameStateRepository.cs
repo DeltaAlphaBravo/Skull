@@ -1,4 +1,5 @@
-﻿using Skull.GamesState;
+﻿using Skull.Skull;
+using Skull.Skull.GamesState;
 using System.Threading.Tasks;
 
 namespace Skull.Tests

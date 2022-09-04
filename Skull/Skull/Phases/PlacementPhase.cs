@@ -1,7 +1,7 @@
 ﻿using Skull.Exceptions;
-using Skull.GamesState;
+using Skull.Skull.GamesState;
 
-namespace Skull.Phases;
+namespace Skull.Skull.Phases;
 
 internal sealed class PlacementPhase : IPlacementPhase
 {

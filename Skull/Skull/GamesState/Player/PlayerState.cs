@@ -1,4 +1,7 @@
-﻿namespace Skull.GamesState
+﻿using Skull.GamesState;
+using Skull.Skull.GamesState.GamePlay;
+
+namespace Skull.Skull.GamesState.Player
 {
     internal class PlayerState : IPlayerState
     {

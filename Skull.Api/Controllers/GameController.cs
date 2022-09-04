@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Skull.GamesState;
+using Skull.Skull;
+using Skull.Skull.GamesState;
 
 namespace Skull.Api.Controllers;
 

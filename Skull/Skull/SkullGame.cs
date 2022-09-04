@@ -1,7 +1,7 @@
-﻿using Skull.GamesState;
-using Skull.Phases;
+﻿using Skull.Skull.GamesState;
+using Skull.Skull.Phases;
 
-namespace Skull
+namespace Skull.Skull
 {
     public class SkullGame : ISkullGame
     {
@@ -12,26 +12,30 @@ namespace Skull
             _repository = repository;
         }
 
-        public async Task<IGameState> CreateGameAsync(int playerCount)
+        public async Task<IGameState> CreateGameAsync()
         {
-            var newGame = CreationPhase.StartGame("Booyah", playerCount);
+            var newGame = CreationPhase.StartGame("Booyah");
             await _repository.SaveGameStatusAsync(newGame);
             return newGame;
         }
 
-        public async Task<IGameState?> JoinPlayer(string game, string playerName, bool isSkull)
+        public async Task<IGameState> StartGame(string game)
         {
-            var gameState = await _repository.GetGameStateAsync(game);
-            if (gameState == null) return null;
-            if (gameState.Phase == Phase.Creation)
-            {
-                var creationPhase = CreationPhase.CreateFromState(gameState);
-                gameState = creationPhase.PlaceFirstCoaster(creationPhase.JoinPlayer(playerName), isSkull);
-                if (gameState.Players.All(p => p.PlayerIdentity != null)) gameState.GoToNextPhase();
-                await _repository.SaveGameStatusAsync(gameState);
-                return gameState;
-            }
-            throw new Exceptions.WrongPhaseException();
+            var gameState = await GetGameStateValidForPhase(game, Phase.Creation);
+            if (gameState.Players.Count is < 3 or > 6) throw new Exceptions.WrongNumberOfPlayersException();
+            gameState.GoToNextPhase();
+            return gameState;
+        }
+
+        public async Task<IGameState> JoinPlayer(string game, string playerName, bool isSkull)
+        {
+            var gameState = await GetGameStateValidForPhase(game, Phase.Creation);
+
+            var creationPhase = CreationPhase.CreateFromState(gameState);
+            gameState = creationPhase.PlaceFirstCoaster(creationPhase.JoinPlayer(playerName), isSkull);
+            if (gameState.Players.All(p => p.PlayerIdentity != null)) gameState.GoToNextPhase();
+            await _repository.SaveGameStatusAsync(gameState);
+            return gameState;
         }
 
         public async Task<IGameState?> GetGameStateAsync(string name)
@@ -39,34 +43,36 @@ namespace Skull
             return await _repository.GetGameStateAsync(name);
         }
 
-        public async Task<IGameState?> PlaceCoasterAsync(string game, int player, bool isSkull)
+        public async Task<IGameState> PlaceCoasterAsync(string game, int player, bool isSkull)
         {
-            var gameState = await _repository.GetGameStateAsync(game);
-            if (gameState == null) return null;
-            if (gameState.Phase == Phase.Placement)
-            {
-                var placementPhase = PlacementPhase.CreateFromState(gameState);
-                gameState = placementPhase.PlaceCoaster(player, isSkull);
-                await _repository.SaveGameStatusAsync(gameState);
-                return gameState;
-            }
-            throw new Exceptions.WrongPhaseException();
+            var gameState = await GetGameStateValidForPhase(game, Phase.Placement);
+
+            var placementPhase = PlacementPhase.CreateFromState(gameState);
+            gameState = placementPhase.PlaceCoaster(player, isSkull);
+            await _repository.SaveGameStatusAsync(gameState);
+            return gameState;
         }
 
-        public async Task<IGameState?> MakeBidAsync(string name, int player, int? cardsToReveal)
+        public async Task<IGameState> MakeBidAsync(string name, int player, int? cardsToReveal)
         {
             var gameState = await _repository.GetGameStateAsync(name);
-            if (gameState == null) return null;
+            if (gameState == null) throw new Exceptions.GameNotFoundException();
             if (gameState.Phase == Phase.Placement) gameState.GoToNextPhase();
-            if (gameState.Phase == Phase.Challenge)
-            {
-                var game = ChallengePhase.CreateFromState(gameState);
-                gameState = game.MakeBid(player, cardsToReveal);
-                PossiblyGoToNextPhase(cardsToReveal, gameState);
-                await _repository.SaveGameStatusAsync(gameState);
-                return gameState;
-            }
-            throw new Exceptions.WrongPhaseException();
+            if (gameState.Phase != Phase.Challenge) throw new Exceptions.WrongPhaseException();
+
+            var game = ChallengePhase.CreateFromState(gameState);
+            gameState = game.MakeBid(player, cardsToReveal);
+            PossiblyGoToNextPhase(cardsToReveal, gameState);
+            await _repository.SaveGameStatusAsync(gameState);
+            return gameState;
+        }
+
+        private async Task<IGameState> GetGameStateValidForPhase(string game, Phase phase)
+        {
+            var gameState = await _repository.GetGameStateAsync(game);
+            if (gameState == null) throw new Exceptions.GameNotFoundException();
+            if (gameState.Phase != phase) throw new Exceptions.WrongPhaseException();
+            return gameState;
         }
 
         private static void PossiblyGoToNextPhase(int? cardsToReveal, IGameState gameState)

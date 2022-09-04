@@ -1,4 +1,4 @@
-﻿using Skull.GamesState;
+﻿using Skull.Skull.GamesState;
 
 namespace Skull.Api.Models
 {
