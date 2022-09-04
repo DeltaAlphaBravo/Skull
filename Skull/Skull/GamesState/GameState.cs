@@ -22,7 +22,12 @@ internal sealed class GameState : IGameState
         _players = new List<IPlayer>();
         Bids = new Stack<IBid>();
         Phase = Phase.Creation;
+    }
+
+    public int RandomNextPlayer()
+    {
         NextPlayer = Random.Shared.Next(_players.Count - 1);
+        return NextPlayer;
     }
 
     public int GoToNextPlayer()

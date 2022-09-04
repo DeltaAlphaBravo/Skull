@@ -10,7 +10,7 @@ namespace Skull.Tests
     public class SkullGameTests
     {
         [TestMethod]
-        public async Task GivenNewGameRequestReceived_WhenRequestForThreePlayers_ThenNewGameReturned()
+        public async Task GivenNewGameRequestReceived_WhenRequest_ThenNewGameReturned()
         {
             //Arrange
             var target = new SkullGame(new SingleGameInMemoryGameStateRepository());
@@ -20,7 +20,7 @@ namespace Skull.Tests
 
             //Assert
             Assert.IsNotNull(actual);
-            Assert.AreEqual(3, actual.Players.Count);
+            Assert.AreEqual(0, actual.Players.Count);
         }
 
         [TestMethod]

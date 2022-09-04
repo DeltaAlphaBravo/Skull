@@ -24,6 +24,7 @@ namespace Skull.Skull
             var gameState = await GetGameStateValidForPhase(game, Phase.Creation);
             if (gameState.Players.Count is < 3 or > 6) throw new Exceptions.WrongNumberOfPlayersException();
             gameState.GoToNextPhase();
+            gameState.RandomNextPlayer();
             return gameState;
         }
 
@@ -33,7 +34,6 @@ namespace Skull.Skull
 
             var creationPhase = CreationPhase.CreateFromState(gameState);
             gameState = creationPhase.PlaceFirstCoaster(creationPhase.JoinPlayer(playerName), isSkull);
-            if (gameState.Players.All(p => p.PlayerIdentity != null)) gameState.GoToNextPhase();
             await _repository.SaveGameStatusAsync(gameState);
             return gameState;
         }

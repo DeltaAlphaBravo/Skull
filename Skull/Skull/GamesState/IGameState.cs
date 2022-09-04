@@ -10,6 +10,7 @@ namespace Skull.Skull.GamesState
         string Name { get; }
         Phase Phase { get; }
         Stack<IBid> Bids { get; }
+        int RandomNextPlayer();
         int GoToNextPlayer();
         Phase GoToNextPhase();
         int JoinPlayer(string name);
