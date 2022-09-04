@@ -15,6 +15,6 @@ public class GameController : ControllerBase
     [Route("api/game")]
     public async Task<IGameState> CreateNewGameAsync([FromBody] int playerCount)
     {
-        return await _skullGame.CreateGameAsync(playerCount);
+        return await _skullGame.CreateGameAsync();
     }
 }

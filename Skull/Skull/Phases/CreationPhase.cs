@@ -11,9 +11,9 @@ namespace Skull.Skull.Phases
             GameState = gameState;
         }
 
-        public static IGameState StartGame(string name)
+        public static IGameState CreateGame(string name)
         {
-            var gameState = new GameState("Booyah");
+            var gameState = new GameState(name);
             return gameState;
         }
 

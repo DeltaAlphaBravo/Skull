@@ -14,7 +14,7 @@ namespace Skull.Skull
 
         public async Task<IGameState> CreateGameAsync()
         {
-            var newGame = CreationPhase.StartGame("Booyah");
+            var newGame = CreationPhase.CreateGame("Booyah");
             await _repository.SaveGameStatusAsync(newGame);
             return newGame;
         }

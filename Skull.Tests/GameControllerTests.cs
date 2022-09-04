@@ -16,7 +16,7 @@ namespace Skull.Tests
             var target = new SkullGame(new SingleGameInMemoryGameStateRepository());
 
             //Act
-            var actual = await target.CreateGameAsync(3);
+            var actual = await target.CreateGameAsync();
 
             //Assert
             Assert.IsNotNull(actual);
@@ -84,8 +84,9 @@ namespace Skull.Tests
         private static async Task<(SkullGame, IGameState)> CreateNPlayerGame(int n, IGameStateRepository gameStateRepository)
         {
             var target = new SkullGame(gameStateRepository);
-            var gameState = await target.CreateGameAsync(n);
+            var gameState = await target.CreateGameAsync();
             for (int i = 0; i < n; i++) await target.JoinPlayer(gameState.Name, i.ToString(), false);
+            gameState = await target.StartGame(gameState.Name);
             return (target, gameState);
         }
 

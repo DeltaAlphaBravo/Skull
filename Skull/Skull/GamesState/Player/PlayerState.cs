@@ -1,5 +1,4 @@
-﻿using Skull.GamesState;
-using Skull.Skull.GamesState.GamePlay;
+﻿using Skull.Skull.GamesState.GamePlay;
 
 namespace Skull.Skull.GamesState.Player
 {
