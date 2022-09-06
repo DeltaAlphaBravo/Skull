@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.SignalR;
 using Skull.Api;
 using Skull.Skull;
 
@@ -12,7 +13,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IGameStateRepository, SingleGameInMemoryGameStateRepository>();
 builder.Services.AddTransient<ISkullGame, SkullGame>();
 builder.Services.AddSignalR();
-builder.Services.AddSingleton<SkullHub>();
+builder.Services.AddSingleton<ISkullHub, SkullHub>();
 
 var app = builder.Build();
 
@@ -33,6 +34,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.MapHub<SkullHub>("/gameHub");
+app.MapHub<SkullHub>("/gameHub").RequireCors(builder => builder.AllowAnyOrigin().WithHeaders("x-requested-with", "x-signalr-user-agent"));
 
 app.Run();

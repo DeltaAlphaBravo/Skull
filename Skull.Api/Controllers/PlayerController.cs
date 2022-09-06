@@ -10,7 +10,7 @@ namespace Skull.Api.Controllers
         private readonly ISkullGame _skullGame;
         private readonly ISkullHub _skullHub;
 
-        public PlayerController(ISkullGame skullGame, SkullHub skullHub)
+        public PlayerController(ISkullGame skullGame, ISkullHub skullHub)
         {
             _skullGame = skullGame;
             _skullHub = skullHub;
@@ -18,14 +18,16 @@ namespace Skull.Api.Controllers
 
         [HttpPost]
         [Route("api/game/{game}/player")]
-        public async Task<ActionResult<IGamePlayerView>> JoinPlayer([FromRoute] string game, [FromBody] IJoinGameModel playerJoin)
+        public async Task<ActionResult<IGamePlayerView>> JoinPlayer([FromRoute] string game, [FromBody] JoinGameModel playerJoin)
         {
+            if (string.IsNullOrEmpty(playerJoin.Name)) return new BadRequestObjectResult(nameof(playerJoin.Name));
+            if (string.IsNullOrEmpty(playerJoin.FirstPlacement)) return new BadRequestObjectResult(nameof(playerJoin.FirstPlacement));
             var gameState = await _skullGame.JoinPlayer(game, 
                                                         playerJoin.Name, 
-                                                        playerJoin.FirstPlacement == CoasterConstants.SKULL);
+                                                        playerJoin.FirstPlacement.ToLowerInvariant() == CoasterConstants.SKULL);
             if (gameState == null) return new NotFoundResult();
             var playerId = gameState.Players.Last(p => p.PlayerIdentity?.Name == playerJoin.Name).PlayerId;
-            await _skullHub.AddToGroupAsync(game);
+            //await _skullHub.AddToGroupAsync(game);
             await _skullHub.SendMessageAsync(game, $"{playerJoin.Name} joined \"{game}\" as player {playerId}");
             var view = new OkObjectResult(new GamePlayerView(gameState, playerId));
             return view;

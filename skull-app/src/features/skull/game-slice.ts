@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, SliceCaseReducers } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
-import { createGame } from "./gameApi";
+import { createGame } from "./game-api";
 
 export interface GameState {
   name: string;
@@ -14,13 +14,17 @@ export const createGameAsync = createAsyncThunk(
   'game/start',
   async () => {
     const response = await createGame();
-    return response.name;
+    return response.name ?? "error";
   }
 )
 
 export const gameSlice = createSlice<GameState, SliceCaseReducers<GameState>>({
   name: 'game',
-  reducers: { },
+  reducers: { 
+    join: (state) => {
+      console.log("Hey");
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(createGameAsync.fulfilled, (state, action) => {
@@ -30,7 +34,7 @@ export const gameSlice = createSlice<GameState, SliceCaseReducers<GameState>>({
   initialState: initialGameState
 });
 
-export const { start } = gameSlice.actions;
+export const {  } = gameSlice.actions;
 
 
 // The function below is called a selector and allows us to select a value from

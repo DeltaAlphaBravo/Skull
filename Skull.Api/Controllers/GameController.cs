@@ -8,13 +8,20 @@ namespace Skull.Api.Controllers;
 public class GameController : ControllerBase
 {
     private readonly ISkullGame _skullGame;
+    private readonly ISkullHub _skullHub;
 
-    public GameController(ISkullGame skullGame) => _skullGame = skullGame;
+    public GameController(ISkullGame skullGame, ISkullHub skullHub)
+    {
+        _skullGame = skullGame;
+        _skullHub = skullHub;
+    }
 
     [HttpPost]
     [Route("api/game")]
     public async Task<IGameState> CreateNewGameAsync()
     {
-        return await _skullGame.CreateGameAsync();
+        var gameState = await _skullGame.CreateGameAsync();
+        //await _skullHub.AddToGroupAsync(gameState.Name);
+        return gameState;
     }
 }

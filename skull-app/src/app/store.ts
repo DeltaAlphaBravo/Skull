@@ -1,9 +1,11 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import { gameReducer } from '../features/skull/gameSlice';
+import { signalRReducer } from '../features/signalr/signalr-slice';
+import { gameReducer } from '../features/skull/game-slice';
 
 export const store = configureStore({
   reducer: {
     game: gameReducer,
+    signalr: signalRReducer,
   },
 });
 
