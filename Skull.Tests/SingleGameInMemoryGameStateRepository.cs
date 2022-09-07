@@ -1,5 +1,4 @@
-﻿using Skull.Skull;
-using Skull.Skull.GamesState;
+﻿using Skull.GamesState;
 using System.Threading.Tasks;
 
 namespace Skull.Tests
@@ -8,8 +7,8 @@ namespace Skull.Tests
     {
         private IGameState? _game;
 
-        public async Task<IGameState?> GetGameStateAsync(string name) => await Task.FromResult(_game);
+        public async Task<IGameState?> GetGameStateAsync(string key) => await Task.FromResult(_game);
 
-        public async Task SaveGameStatusAsync(IGameState gameState) => await Task.FromResult(_game = gameState);
+        public async Task SaveGameStateAsync(string key, IGameState gameState) => await Task.FromResult(_game = gameState);
     }
 }

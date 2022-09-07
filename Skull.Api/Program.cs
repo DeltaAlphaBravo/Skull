@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.SignalR;
+using Skull;
 using Skull.Api;
-using Skull.Skull;
 
 var builder = WebApplication.CreateBuilder(args);
 

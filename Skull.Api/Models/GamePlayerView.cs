@@ -1,4 +1,4 @@
-﻿using Skull.Skull.GamesState;
+﻿using Skull.GamesState;
 
 namespace Skull.Api.Models
 {
@@ -18,35 +18,34 @@ namespace Skull.Api.Models
         {
             PlayerId = playerId;
             NextPlayer = gameState.NextPlayer;
-            Hand = gameState.Players.Where(h => h.PlayerId == playerId)
-                                    .Select(h => new ReadOnlyHand
-                                    {
-                                        CardCount = h.PlayerState.Hand.CardCount,
-                                        HasSkull = h.PlayerState.Hand.HasSkull,
-                                        PlayerId = h.PlayerState.Hand.PlayerId
-                                    })
-                                    .Single();
-            OpponentStates = gameState.Players.Where(p => p.PlayerId != playerId)
-                                              .Select(p =>
-                                              {
-                                                  var opponentHand = new ReadOnlyHand
-                                                  {
-                                                      CardCount = p.PlayerState.Hand.CardCount,
-                                                      HasSkull = p.PlayerState.Hand.HasSkull,
-                                                      PlayerId = p.PlayerState.Hand.PlayerId
-                                                  };
-                                                  return new OpponentState(p.PlayerId, 
-                                                                           p.PlayerIdentity?.Name ?? "????", 
-                                                                           opponentHand)
-                                                  {
-                                                      
-                                                      StackCount = p.PlayerState.PlayedCoasters.Count(),
-                                                      PlayerId = p.PlayerId
-                                                  };
-                                              })
-                                              .ToList();
-            PlayedCoasters = gameState.Players.Where(h => h.PlayerId == playerId)
-                                              .Select(h => new Stack<bool>(h.PlayerState.PlayedCoasters.Select(c => c == Coaster.Skull)))
+            Hand = gameState.PlayerStates.Where(h => h.PlayerId == playerId)
+                                         .Select(h => new ReadOnlyHand
+                                         {
+                                             CardCount = h.Hand.CardCount,
+                                             HasSkull = h.Hand.HasSkull,
+                                             PlayerId = h.PlayerId
+                                         })
+                                         .Single();
+            OpponentStates = gameState.PlayerStates.Where(p => p.PlayerId != playerId)
+                                                   .Select(p =>
+                                                   {
+                                                       var opponentHand = new ReadOnlyHand
+                                                       {
+                                                           CardCount = p.Hand.CardCount,
+                                                           HasSkull = p.Hand.HasSkull,
+                                                           PlayerId = p.PlayerId
+                                                       };
+                                                       return new OpponentState(p.PlayerId,
+                                                                                opponentHand)
+                                                       {
+                                                           
+                                                           StackCount = p.PlayedCoasters.Count(),
+                                                           PlayerId = p.PlayerId
+                                                       };
+                                                   })
+                                                   .ToList();
+            PlayedCoasters = gameState.PlayerStates.Where(h => h.PlayerId == playerId)
+                                              .Select(h => new Stack<bool>(h.PlayedCoasters.Select(c => c == Coaster.Skull)))
                                               .Single();
         }
     }

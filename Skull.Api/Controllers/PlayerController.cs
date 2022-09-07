@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Skull.Api.Models;
-using Skull.Skull;
 
 namespace Skull.Api.Controllers
 {
@@ -16,43 +15,25 @@ namespace Skull.Api.Controllers
             _skullHub = skullHub;
         }
 
-        [HttpPost]
-        [Route("api/game/{game}/player")]
-        public async Task<ActionResult<IGamePlayerView>> JoinPlayer([FromRoute] string game, [FromBody] JoinGameModel playerJoin)
-        {
-            if (string.IsNullOrEmpty(playerJoin.Name)) return new BadRequestObjectResult(nameof(playerJoin.Name));
-            if (string.IsNullOrEmpty(playerJoin.FirstPlacement)) return new BadRequestObjectResult(nameof(playerJoin.FirstPlacement));
-            var gameState = await _skullGame.JoinPlayer(game, 
-                                                        playerJoin.Name, 
-                                                        playerJoin.FirstPlacement.ToLowerInvariant() == CoasterConstants.SKULL);
-            if (gameState == null) return new NotFoundResult();
-            var playerId = gameState.Players.Last(p => p.PlayerIdentity?.Name == playerJoin.Name).PlayerId;
-            //await _skullHub.AddToGroupAsync(game);
-            await _skullHub.SendMessageAsync(game, $"{playerJoin.Name} joined \"{game}\" as player {playerId}");
-            var view = new OkObjectResult(new GamePlayerView(gameState, playerId));
-            return view;
-        }
-
         [HttpGet]
-        [Route("api/game/{game}/player/{player}/view")]
-        public async Task<ActionResult<IGamePlayerView>> GetGamePlayerViewAsync([FromRoute] string game, [FromRoute] int player)
+        [Route("api/table/{tableName}/player/{player}/view")]
+        public async Task<ActionResult<IGamePlayerView>> GetGamePlayerViewAsync([FromRoute] string tableName, [FromRoute] int player)
         {
-            var gameState = await _skullGame.GetGameStateAsync(game);
+            var gameState = await _skullGame.GetGameStateAsync(tableName);
             if (gameState == null) return new NotFoundResult();
             var view = new OkObjectResult(new GamePlayerView(gameState, player));
             return view;
         }
 
         [HttpPost]
-        [Route("api/game/{game}/player/{player}/stack")]
-        public async Task<ActionResult<IGamePlayerView>> PlaceCoasterAsync([FromRoute] string game, [FromRoute] int player, [FromBody] bool isSkull)
+        [Route("api/table/{tableName}/player/{player}/stack")]
+        public async Task<ActionResult<IGamePlayerView>> PlaceCoasterAsync([FromRoute] string tableName, [FromRoute] int player, [FromBody] bool isSkull)
         {
             try
             {
-                var gameState = await _skullGame.PlaceCoasterAsync(game, player, isSkull);
+                var gameState = await _skullGame.PlaceCoasterAsync(tableName, player, isSkull);
                 if (gameState == null) return new NotFoundResult();
-                await _skullHub.AddToGroupAsync(game);
-                await _skullHub.SendMessageAsync(game, $"player {player} played a coaster");
+                await _skullHub.SendMessageAsync(tableName, $"player {player} played a coaster");
                 return new OkObjectResult(new GamePlayerView(gameState, player));
             }
             catch (InvalidOperationException)
@@ -62,15 +43,14 @@ namespace Skull.Api.Controllers
         }
 
         [HttpPost]
-        [Route("api/game/{game}/player/{player}/challenge")]
-        public async Task<ActionResult<IGamePlayerView>> MakeBidAsync([FromRoute] string game, [FromRoute] int player, [FromBody] int? bid)
+        [Route("api/table/{tableName}/player/{player}/challenge")]
+        public async Task<ActionResult<IGamePlayerView>> MakeBidAsync([FromRoute] string tableName, [FromRoute] int player, [FromBody] int? bid)
         {
             try
             {
-                var gameState = await _skullGame.MakeBidAsync(game, player, bid);
+                var gameState = await _skullGame.MakeBidAsync(tableName, player, bid);
                 if (gameState == null) return new NotFoundResult();
-                await _skullHub.AddToGroupAsync(game);
-                await _skullHub.SendMessageAsync(game, $"player {player} challenged with {bid} coasters");
+                await _skullHub.SendMessageAsync(tableName, $"player {player} challenged with {bid} coasters");
                 return new OkObjectResult(new GamePlayerView(gameState, player));
             }
             catch (InvalidOperationException)
