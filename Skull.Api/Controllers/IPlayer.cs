@@ -1,6 +1,6 @@
-﻿namespace Skull.GamesState.Player
+﻿namespace Skull.Api.Controllers
 {
-    public interface IPlayerIdentity
+    public interface IPlayer
     {
         string Name { get; }
         int PlayerId { get; }

@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Skull.GamesState;
+using Skull.Api.Models;
 
 namespace Skull.Api.Controllers;
 
@@ -21,11 +21,56 @@ public class GameController : ControllerBase
 
     [HttpPost]
     [Route("api/table/{tableName}/game")]
-    public async Task<IGameState> CreateNewGameAsync([FromRoute] string tableName)
+    public async Task<ActionResult> CreateNewGameAsync([FromRoute] string tableName)
     {
         var table = await _tableRepository.GetTableAsync(tableName);
         var gameState = await _skullGame.StartGameAsync(table);
         await _skullHub.SendMessageAsync(tableName, $"{tableName} started a new game");
-        return gameState;
+        return new OkResult();
+    }
+
+
+    [HttpGet]
+    [Route("api/table/{tableName}/player/{player}/view")]
+    public async Task<ActionResult<IGamePlayerView>> GetGamePlayerViewAsync([FromRoute] string tableName, [FromRoute] int player)
+    {
+        var gameState = await _skullGame.GetGameStateAsync(tableName);
+        if (gameState == null) return new NotFoundResult();
+        var view = new OkObjectResult(new GamePlayerView(gameState, player));
+        return view;
+    }
+
+    [HttpPost]
+    [Route("api/table/{tableName}/player/{player}/stack")]
+    public async Task<ActionResult<IGamePlayerView>> PlaceCoasterAsync([FromRoute] string tableName, [FromRoute] int player, [FromBody] bool isSkull)
+    {
+        try
+        {
+            var gameState = await _skullGame.PlaceCoasterAsync(tableName, player, isSkull);
+            if (gameState == null) return new NotFoundResult();
+            await _skullHub.SendMessageAsync(tableName, $"player {player} played a coaster");
+            return new OkObjectResult(new GamePlayerView(gameState, player));
+        }
+        catch (InvalidOperationException)
+        {
+            return new BadRequestResult();
+        }
+    }
+
+    [HttpPost]
+    [Route("api/table/{tableName}/player/{player}/challenge")]
+    public async Task<ActionResult<IGamePlayerView>> MakeBidAsync([FromRoute] string tableName, [FromRoute] int player, [FromBody] int? bid)
+    {
+        try
+        {
+            var gameState = await _skullGame.MakeBidAsync(tableName, player, bid);
+            if (gameState == null) return new NotFoundResult();
+            await _skullHub.SendMessageAsync(tableName, $"player {player} challenged with {bid} coasters");
+            return new OkObjectResult(new GamePlayerView(gameState, player));
+        }
+        catch (InvalidOperationException)
+        {
+            return new BadRequestResult();
+        }
     }
 }

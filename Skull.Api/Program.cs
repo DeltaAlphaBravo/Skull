@@ -11,6 +11,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IGameStateRepository, SingleGameInMemoryGameStateRepository>();
+builder.Services.AddSingleton<ITableRepository, SingleTableInMemoryTableRepository>();
 builder.Services.AddTransient<ISkullGame, SkullGame>();
 builder.Services.AddSignalR();
 builder.Services.AddSingleton<ISkullHub, SkullHub>();
