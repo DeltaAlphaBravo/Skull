@@ -24,8 +24,9 @@ public class GameController : ControllerBase
     public async Task<ActionResult> CreateNewGameAsync([FromRoute] string tableName)
     {
         var table = await _tableRepository.GetTableAsync(tableName);
+        if (table == null) return new NotFoundResult();
         var gameState = await _skullGame.StartGameAsync(table);
-        await _skullHub.SendMessageAsync(tableName, $"{tableName} started a new game");
+        await _skullHub.NotifyGameStarted(tableName);
         return new OkResult();
     }
 
@@ -48,7 +49,7 @@ public class GameController : ControllerBase
         {
             var gameState = await _skullGame.PlaceCoasterAsync(tableName, player, isSkull);
             if (gameState == null) return new NotFoundResult();
-            await _skullHub.SendMessageAsync(tableName, $"player {player} played a coaster");
+            await _skullHub.NotifyNewPlacement(tableName, player);
             return new OkObjectResult(new GamePlayerView(gameState, player));
         }
         catch (InvalidOperationException)
@@ -65,7 +66,7 @@ public class GameController : ControllerBase
         {
             var gameState = await _skullGame.MakeBidAsync(tableName, player, bid);
             if (gameState == null) return new NotFoundResult();
-            await _skullHub.SendMessageAsync(tableName, $"player {player} challenged with {bid} coasters");
+            await _skullHub.NotifyNewBid(tableName, player, bid);
             return new OkObjectResult(new GamePlayerView(gameState, player));
         }
         catch (InvalidOperationException)

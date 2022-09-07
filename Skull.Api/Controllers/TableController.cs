@@ -31,7 +31,7 @@ public class TableController : ControllerBase
         var foundTable = await _tableRepository.GetTableAsync(name);
         if (foundTable == null) return new NotFoundResult();
         var playerId = foundTable.JoinPlayer(name);
-        await _skullHub.SendMessageAsync(tableName, $"{name} joined \"{tableName}\" as player {playerId}");
+        await _skullHub.NotifyNewPlayer(tableName, name, playerId);
         return new OkObjectResult(playerId);
     }
 

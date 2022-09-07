@@ -3,7 +3,10 @@ namespace Skull.Api
 {
     public interface ISkullHub
     {
-        Task AddToGroupAsync(string game);
-        Task SendMessageAsync(string game, string message);
+        Task SubscribeToNotificationsAsync(string table);
+        Task NotifyNewPlayer(string table, string playerName, int playerId);
+        Task NotifyGameStarted(string table);
+        Task NotifyNewPlacement(string table, int playerId);
+        Task NotifyNewBid(string table, int playerId, int? bid);
     }
 }
