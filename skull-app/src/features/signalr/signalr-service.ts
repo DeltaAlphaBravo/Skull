@@ -34,11 +34,16 @@ export class SignalRService {
         return this.startSignalRConnection(this._connection);
     }
 
-    async subscribeTo(game: string): Promise<boolean> {
+    OnPlayerJoin(callback: (name: string, id: number) => void): void {
+        if(!this._connection) throw("Not connected to SignalR");
+        this._connection.on("ReceiveNewPlayer", callback);
+    }
+
+    async subscribeTo(table: string): Promise<boolean> {
         if( this._connection == null) return Promise.resolve(false);
         try {
-            await this._connection.invoke("AddToGroupAsync", game);
-            console.log("joined ", game);
+            await this._connection.invoke("SubscribeToNotificationsAsync", table);
+            console.log("joined ", table);
             return true;
         } catch (err) {
             console.log(err);

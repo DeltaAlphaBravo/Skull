@@ -1,10 +1,10 @@
-import { createGameAsync, selectName } from "./game-slice";
+import { createGameAsync } from "./game-slice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { selectIsConnected, ensureSignalRConnectionAsync, subscribeToGameAsync } from "../signalr/signalr-slice";
+import { selectIsConnected, ensureSignalRConnectionAsync, subscribeToTableAsync } from "../signalr/signalr-slice";
 import { SignalRService } from "../signalr/signalr-service";
 
-export function Game() {
-    const name = useAppSelector(selectName);
+export function Game(props: { name: string; }) {
+    const name = props.name;
     const isSignalRConnected = useAppSelector(selectIsConnected);
     const dispatch = useAppDispatch();
     const signalrService: SignalRService = new SignalRService();
@@ -14,17 +14,17 @@ export function Game() {
             <button
                 onClick={
                     () => {
-                        dispatch(createGameAsync())
-                            .then((result) => {
+                        dispatch(createGameAsync(name))
+                            .then(async (result) => {
                                 console.log(isSignalRConnected);
                                 if (!isSignalRConnected) {
-                                    return dispatch(ensureSignalRConnectionAsync(signalrService))
-                                        .then(() => Promise.resolve(result.payload as string));
+                                    await dispatch(ensureSignalRConnectionAsync(signalrService));
+                                    return await Promise.resolve(result.payload as string);
                                 } else {
                                     return Promise.resolve(result.payload as string);
                                 }
                             })
-                            .then((gameName) => dispatch(subscribeToGameAsync({ game: gameName, signalRService: signalrService })));
+                            .then((gameName) => dispatch(subscribeToTableAsync({ table: gameName, signalRService: signalrService })));
                     }
                 }
             >

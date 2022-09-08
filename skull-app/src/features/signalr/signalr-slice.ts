@@ -21,11 +21,11 @@ export const ensureSignalRConnectionAsync = createAsyncThunk(
   }
 )
 
-export const subscribeToGameAsync = createAsyncThunk(
+export const subscribeToTableAsync = createAsyncThunk(
   'signalr/join',
-  async ({game, signalRService}: {game: string, signalRService: SignalRService}) => {
+  async ({table, signalRService}: {table: string, signalRService: SignalRService}) => {
     console.log("Attempting to start signalr");
-    return await signalRService.subscribeTo(game);
+    return await signalRService.subscribeTo(table);
   }
 )
 

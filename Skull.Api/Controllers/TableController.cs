@@ -20,7 +20,8 @@ public class TableController : ControllerBase
     {
         var table = new Table("Booyah");
         await _tableRepository.SaveTableAsync(table);
-        return table.Name;
+        Response.Headers.Location = $"api/Table/{table.Name}";
+        return new OkObjectResult($"\"{table.Name}\"");
     }
 
     [HttpPost]

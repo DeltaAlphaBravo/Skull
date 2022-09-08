@@ -3,24 +3,24 @@ import { RootState } from "../../app/store";
 import { createGame } from "./game-api";
 
 export interface GameState {
-  name: string;
+  phase: string;
 }
 
 const initialGameState: GameState = {
-  name: "initial",
+  phase: "not started",
 };
 
 export const createGameAsync = createAsyncThunk(
   'game/start',
-  async () => {
-    const response = await createGame();
-    return response.name ?? "error";
+  async (tableName: string) => {
+    await createGame(tableName)
+      .catch((err) => console.log("Failed to create game", err));
   }
 )
 
 export const gameSlice = createSlice<GameState, SliceCaseReducers<GameState>>({
   name: 'game',
-  reducers: { 
+  reducers: {
     join: (state) => {
       console.log("Hey");
     }
@@ -28,18 +28,18 @@ export const gameSlice = createSlice<GameState, SliceCaseReducers<GameState>>({
   extraReducers: (builder) => {
     builder
       .addCase(createGameAsync.fulfilled, (state, action) => {
-        state.name = action.payload || "";
+        state.phase = "placement";
       });
   },
   initialState: initialGameState
 });
 
-export const {  } = gameSlice.actions;
+export const { } = gameSlice.actions;
 
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of
 // in the slice file. For example: `useSelector((state: RootState) => state.counter.value)`
-export const selectName = (state: RootState) => state.game.name;
+// export const selectName = (state: RootState) => state.game.phase;
 
 export const gameReducer = gameSlice.reducer;

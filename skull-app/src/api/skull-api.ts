@@ -8,7 +8,48 @@
 /* eslint-disable */
 // ReSharper disable InconsistentNaming
 
-export class Client {
+export interface IClient {
+
+    /**
+     * @return Success
+     */
+    game(tableName: string): Promise<void>;
+
+    /**
+     * @return Success
+     */
+    view(tableName: string, player: number): Promise<IGamePlayerView>;
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    stack(tableName: string, player: number, body: boolean | undefined): Promise<IGamePlayerView>;
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    challenge(tableName: string, player: number, body: number | undefined): Promise<IGamePlayerView>;
+
+    /**
+     * @return Success
+     */
+    tablePOST(): Promise<string>;
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    players(tableName: string, body: string | undefined): Promise<number>;
+
+    /**
+     * @return Success
+     */
+    tableGET(tableName: string): Promise<ITableView>;
+}
+
+export class Client implements IClient {
     private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
@@ -85,8 +126,7 @@ export class Client {
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = IGamePlayerView.fromJS(resultData200);
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as IGamePlayerView;
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -133,8 +173,7 @@ export class Client {
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = IGamePlayerView.fromJS(resultData200);
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as IGamePlayerView;
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -181,8 +220,7 @@ export class Client {
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = IGamePlayerView.fromJS(resultData200);
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as IGamePlayerView;
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -218,9 +256,7 @@ export class Client {
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                result200 = resultData200 !== undefined ? resultData200 : <any>null;
-    
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as string;
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -264,9 +300,7 @@ export class Client {
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                result200 = resultData200 !== undefined ? resultData200 : <any>null;
-    
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as number;
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -305,8 +339,7 @@ export class Client {
         if (status === 200) {
             return response.text().then((_responseText) => {
             let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = ITableView.fromJS(resultData200);
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ITableView;
             return result200;
             });
         } else if (status !== 200 && status !== 204) {
@@ -318,292 +351,43 @@ export class Client {
     }
 }
 
-export class IGamePlayerView implements IIGamePlayerView {
+export interface IGamePlayerView {
     readonly playerId?: number;
     readonly nextPlayer?: number;
-    readonly opponentStates?: IOpponentState[] | undefined;
+    readonly opponentStates?: IOpponentState[] | null;
     hand?: IReadOnlyHand;
-    readonly playedCoasters?: boolean[] | undefined;
-
-    constructor(data?: IIGamePlayerView) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            (<any>this).playerId = _data["playerId"];
-            (<any>this).nextPlayer = _data["nextPlayer"];
-            if (Array.isArray(_data["opponentStates"])) {
-                (<any>this).opponentStates = [] as any;
-                for (let item of _data["opponentStates"])
-                    (<any>this).opponentStates!.push(IOpponentState.fromJS(item));
-            }
-            this.hand = _data["hand"] ? IReadOnlyHand.fromJS(_data["hand"]) : <any>undefined;
-            if (Array.isArray(_data["playedCoasters"])) {
-                (<any>this).playedCoasters = [] as any;
-                for (let item of _data["playedCoasters"])
-                    (<any>this).playedCoasters!.push(item);
-            }
-        }
-    }
-
-    static fromJS(data: any): IGamePlayerView {
-        data = typeof data === 'object' ? data : {};
-        let result = new IGamePlayerView();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["playerId"] = this.playerId;
-        data["nextPlayer"] = this.nextPlayer;
-        if (Array.isArray(this.opponentStates)) {
-            data["opponentStates"] = [];
-            for (let item of this.opponentStates)
-                data["opponentStates"].push(item.toJSON());
-        }
-        data["hand"] = this.hand ? this.hand.toJSON() : <any>undefined;
-        if (Array.isArray(this.playedCoasters)) {
-            data["playedCoasters"] = [];
-            for (let item of this.playedCoasters)
-                data["playedCoasters"].push(item);
-        }
-        return data;
-    }
+    readonly playedCoasters?: boolean[] | null;
 }
 
-export interface IIGamePlayerView {
-    playerId?: number;
-    nextPlayer?: number;
-    opponentStates?: IOpponentState[] | undefined;
-    hand?: IReadOnlyHand;
-    playedCoasters?: boolean[] | undefined;
-}
-
-export class IOpponentHand implements IIOpponentHand {
+export interface IOpponentHand {
     readonly cardCount?: number;
     readonly playerId?: number;
-
-    constructor(data?: IIOpponentHand) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            (<any>this).cardCount = _data["cardCount"];
-            (<any>this).playerId = _data["playerId"];
-        }
-    }
-
-    static fromJS(data: any): IOpponentHand {
-        data = typeof data === 'object' ? data : {};
-        let result = new IOpponentHand();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["cardCount"] = this.cardCount;
-        data["playerId"] = this.playerId;
-        return data;
-    }
 }
 
-export interface IIOpponentHand {
-    cardCount?: number;
-    playerId?: number;
-}
-
-export class IOpponentState implements IIOpponentState {
+export interface IOpponentState {
     readonly playerId?: number;
     hand?: IOpponentHand;
     readonly stackCount?: number;
-
-    constructor(data?: IIOpponentState) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            (<any>this).playerId = _data["playerId"];
-            this.hand = _data["hand"] ? IOpponentHand.fromJS(_data["hand"]) : <any>undefined;
-            (<any>this).stackCount = _data["stackCount"];
-        }
-    }
-
-    static fromJS(data: any): IOpponentState {
-        data = typeof data === 'object' ? data : {};
-        let result = new IOpponentState();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["playerId"] = this.playerId;
-        data["hand"] = this.hand ? this.hand.toJSON() : <any>undefined;
-        data["stackCount"] = this.stackCount;
-        return data;
-    }
 }
 
-export interface IIOpponentState {
-    playerId?: number;
-    hand?: IOpponentHand;
-    stackCount?: number;
-}
-
-export class IPlayer implements IIPlayer {
-    readonly name?: string | undefined;
+export interface IPlayer {
+    readonly name?: string | null;
     readonly playerId?: number;
-
-    constructor(data?: IIPlayer) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            (<any>this).name = _data["name"];
-            (<any>this).playerId = _data["playerId"];
-        }
-    }
-
-    static fromJS(data: any): IPlayer {
-        data = typeof data === 'object' ? data : {};
-        let result = new IPlayer();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
-        data["playerId"] = this.playerId;
-        return data;
-    }
 }
 
-export interface IIPlayer {
-    name?: string | undefined;
-    playerId?: number;
-}
-
-export class IReadOnlyHand implements IIReadOnlyHand {
+export interface IReadOnlyHand {
     readonly cardCount?: number;
     readonly playerId?: number;
     readonly hasSkull?: boolean;
-
-    constructor(data?: IIReadOnlyHand) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            (<any>this).cardCount = _data["cardCount"];
-            (<any>this).playerId = _data["playerId"];
-            (<any>this).hasSkull = _data["hasSkull"];
-        }
-    }
-
-    static fromJS(data: any): IReadOnlyHand {
-        data = typeof data === 'object' ? data : {};
-        let result = new IReadOnlyHand();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["cardCount"] = this.cardCount;
-        data["playerId"] = this.playerId;
-        data["hasSkull"] = this.hasSkull;
-        return data;
-    }
 }
 
-export interface IIReadOnlyHand {
-    cardCount?: number;
-    playerId?: number;
-    hasSkull?: boolean;
-}
-
-export class ITableView implements IITableView {
-    readonly name?: string | undefined;
-    readonly players?: IPlayer[] | undefined;
-
-    constructor(data?: IITableView) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            (<any>this).name = _data["name"];
-            if (Array.isArray(_data["players"])) {
-                (<any>this).players = [] as any;
-                for (let item of _data["players"])
-                    (<any>this).players!.push(IPlayer.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): ITableView {
-        data = typeof data === 'object' ? data : {};
-        let result = new ITableView();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
-        if (Array.isArray(this.players)) {
-            data["players"] = [];
-            for (let item of this.players)
-                data["players"].push(item.toJSON());
-        }
-        return data;
-    }
-}
-
-export interface IITableView {
-    name?: string | undefined;
-    players?: IPlayer[] | undefined;
+export interface ITableView {
+    readonly name?: string | null;
+    readonly players?: IPlayer[] | null;
 }
 
 export class ApiException extends Error {
-    message: string;
+    override message: string;
     status: number;
     response: string;
     headers: { [key: string]: any; };
