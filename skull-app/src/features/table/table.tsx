@@ -28,18 +28,17 @@ export function Table(props: { signalrService: SignalRService }) {
                             })
                             .then(() => dispatch(subscribeToTableAsync({ table: tableName, signalRService: signalrService })))
                             .then(() => signalrService.OnPlayerJoin(() => dispatch(getTableAsync(tableName))))
-                            .then(() => dispatch(joinTableAsync({tableName: tableName, playerName: "Bob"})));
+                            .then(() => dispatch(joinTableAsync({ tableName: tableName, playerName: "Bob" })));
                     }
                 }
             >
                 Create Table
             </button>
             <ul>
-      {players?.map((player) =>
-        <Player key={player.playerId}
-                     value={player} />
-      )}
-    </ul>
+                {players?.map((player) =>
+                    <Player key={player.playerId} value={player} />
+                )}
+            </ul>
         </div>
     );
 }
