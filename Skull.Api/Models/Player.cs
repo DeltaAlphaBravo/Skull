@@ -1,6 +1,6 @@
 ﻿using Skull.GamesState.Player;
 
-namespace Skull.Api.Controllers;
+namespace Skull.Api.Models;
 
 public class Player : IPlayer
 {

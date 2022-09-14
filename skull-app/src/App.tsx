@@ -4,9 +4,9 @@ import { SignalRService } from './features/signalr/signalr-service';
 
 function App() {
   return (
-    <div className="App">
+    <div className="App" >
       <header className="App-header">
-        <Table signalrService={new SignalRService()}/>
+        <Table  signalrService={new SignalRService()}/>
       </header>
     </div>
   );

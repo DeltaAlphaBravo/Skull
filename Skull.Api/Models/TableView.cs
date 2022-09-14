@@ -1,5 +1,6 @@
-﻿
-namespace Skull.Api.Controllers;
+﻿using Skull.Api.Controllers;
+
+namespace Skull.Api.Models;
 
 internal class TableView : ITableView
 {

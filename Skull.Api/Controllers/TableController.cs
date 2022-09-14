@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Skull.Api.Models;
 
 namespace Skull.Api.Controllers;
 

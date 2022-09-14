@@ -1,4 +1,4 @@
-﻿namespace Skull.Api.Controllers
+﻿namespace Skull.Api.Models
 {
     public interface IPlayer
     {
