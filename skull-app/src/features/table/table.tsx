@@ -18,24 +18,7 @@ export function Table(props: { signalrService: SignalRService }): JSX.Element {
     return (
         <div>
             <div>{name}</div>
-            <button
-                onClick={
-                    () => {
-                        let tableName: string;
-                        dispatch(createTableAsync())
-                            .then(async (result) => {
-                                console.log(isSignalRConnected);
-                                if (!isSignalRConnected) {
-                                    await dispatch(ensureSignalRConnectionAsync(signalrService));
-                                }
-                                tableName = result.payload as string;
-                            })
-                            .then(() => dispatch(subscribeToTableAsync({ table: tableName, signalRService: signalrService })))
-                            .then(() => signalrService.OnPlayerJoin(() => dispatch(getTableAsync(tableName))))
-                            .then(() => dispatch(joinTableAsync({ tableName: tableName, playerName: "Bob" })));
-                    }
-                }
-            >
+            <button onClick={toggle}            >
                 Create Table
             </button>
             <ul>
@@ -43,14 +26,26 @@ export function Table(props: { signalrService: SignalRService }): JSX.Element {
                     <Player key={player.playerId} value={player} />
                 )}
             </ul>
-            <button className="button-default" onClick={toggle}>Show Modal</button>
             <Modal
                 innerBody={<div>Join as ...</div>}
                 isShowing={isShowing}
-                hide={(name) => {
+                ok={(name) => {
+                    let tableName: string;
                     dispatch(setName(name));
+                    dispatch(createTableAsync())
+                        .then(async (result) => {
+                            console.log(isSignalRConnected);
+                            if (!isSignalRConnected) {
+                                await dispatch(ensureSignalRConnectionAsync(signalrService));
+                            }
+                            tableName = result.payload as string;
+                        })
+                        .then(() => dispatch(subscribeToTableAsync({ table: tableName, signalRService: signalrService })))
+                        .then(() => signalrService.OnPlayerJoin(() => dispatch(getTableAsync(tableName))))
+                        .then(() => dispatch(joinTableAsync({ tableName: tableName, playerName: name })));
                     toggle();
                 }}
+                cancel={toggle}
             />
         </div>
     );
