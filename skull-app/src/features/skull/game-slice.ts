@@ -1,5 +1,4 @@
 import { createAsyncThunk, createSlice, SliceCaseReducers } from "@reduxjs/toolkit";
-import { RootState } from "../../app/store";
 import { createGame } from "./game-api";
 
 export interface GameState {

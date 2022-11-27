@@ -1,4 +1,3 @@
-import { HttpTransportType, HubConnection, HubConnectionBuilder, IHttpConnectionOptions, JsonHubProtocol, LogLevel } from '@microsoft/signalr';
 import { createAsyncThunk, createSlice, SliceCaseReducers } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import { SignalRService } from './signalr-service';
@@ -24,7 +23,7 @@ export const ensureSignalRConnectionAsync = createAsyncThunk(
 export const subscribeToTableAsync = createAsyncThunk(
   'signalr/join',
   async ({table, signalRService}: {table: string, signalRService: SignalRService}) => {
-    console.log("Attempting to start signalr");
+    console.log("Attempting to join signalr");
     return await signalRService.subscribeTo(table);
   }
 )
