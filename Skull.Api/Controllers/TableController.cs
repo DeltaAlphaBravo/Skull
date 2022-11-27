@@ -30,7 +30,7 @@ public class TableController : ControllerBase
     public async Task<ActionResult<int>> AddPlayerAsync([FromRoute]string tableName, [FromBody]string name)
     {
         if (string.IsNullOrEmpty(name)) return new BadRequestObjectResult(nameof(name));
-        var foundTable = await _tableRepository.GetTableAsync(name);
+        var foundTable = await _tableRepository.GetTableAsync(tableName);
         if (foundTable == null) return new NotFoundResult();
         var playerId = foundTable.JoinPlayer(name);
         await _skullHub.NotifyNewPlayer(tableName, name, playerId);

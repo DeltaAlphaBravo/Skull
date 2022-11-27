@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './modal.css'
 
-const Modal = ({ innerBody, isShowing, ok, cancel }: { innerBody: JSX.Element, isShowing: boolean, ok: (value: string) => void, cancel: () => void }) => {
+const StringModal = ({ innerBody, isShowing, ok, cancel }: { innerBody: JSX.Element, isShowing: boolean, ok: (value: string) => void, cancel: () => void }) => {
   let result: string;
   return (isShowing ? ReactDOM.createPortal(
     <React.Fragment>
@@ -14,12 +14,12 @@ const Modal = ({ innerBody, isShowing, ok, cancel }: { innerBody: JSX.Element, i
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
+          {innerBody}
           <p>
-            {innerBody}
             <input type='text' onChange={(event) => result = event.currentTarget.value} />
           </p>
           <span>
-            <button onClick={() => { ok(result ?? "The Nameless One") }}>OK</button>
+            <button onClick={() => { ok(result); result = ""; }}>OK</button>
             <button onClick={cancel}>Cancel</button>
           </span>
         </div>
@@ -28,4 +28,4 @@ const Modal = ({ innerBody, isShowing, ok, cancel }: { innerBody: JSX.Element, i
   ) : null);
 }
 
-export default Modal;
+export default StringModal;

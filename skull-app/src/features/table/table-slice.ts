@@ -4,8 +4,8 @@ import { RootState } from "../../app/store";
 import { TableService } from "./table-service";
 
 const initalTableState: ITableView = {
-    name: null,
-    players: null,
+  name: null,
+  players: null,
 };
 
 export const createTableAsync = createAsyncThunk(
@@ -17,27 +17,28 @@ export const createTableAsync = createAsyncThunk(
 )
 
 export const getTableAsync = createAsyncThunk(
-    'table/retrieve',
-    async (tableName: string) => {
-      return await (new TableService()).getTable(tableName)
-        .catch((err) => console.log("Failed to get table", err));
-    }
-  )
+  'table/retrieve',
+  async (tableName: string) => {
+    var table = await new TableService().getTable(tableName)
+      .catch((err) => console.log("Failed to find table", err));
+    return table
+  }
+)
 
-  export const joinTableAsync = createAsyncThunk(
-    'table/join',
-    async ({tableName, playerName}: {tableName: string, playerName: string}) => {
-      return await (new TableService()).joinTable(tableName, playerName)
-        .catch((err) => console.log("Failed to join table", err));
-    }
-  )
+export const joinTableAsync = createAsyncThunk(
+  'table/join',
+  async ({ tableName, playerName }: { tableName: string, playerName: string }) => {
+    return await (new TableService()).joinTable(tableName, playerName)
+      .catch((err) => console.log("Failed to join table", err));
+  }
+)
 
 export const tableSlice = createSlice<ITableView, SliceCaseReducers<ITableView>>({
   name: 'table',
   reducers: {
-    join: () => {
-      
-    }
+    setTableName: (state, action) => {
+      state.name = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -47,6 +48,7 @@ export const tableSlice = createSlice<ITableView, SliceCaseReducers<ITableView>>
       .addCase(getTableAsync.fulfilled, (state, action) => {
         console.log(action.payload?.players);
         state.players = action.payload?.players;
+        state.name = state.name ?? action.payload?.name;
       })
       .addCase(joinTableAsync.fulfilled, (state, action) => {
       });
@@ -54,7 +56,7 @@ export const tableSlice = createSlice<ITableView, SliceCaseReducers<ITableView>>
   initialState: initalTableState
 });
 
-export const { } = tableSlice.actions;
+export const { setTableName } = tableSlice.actions;
 
 
 // The function below is called a selector and allows us to select a value from

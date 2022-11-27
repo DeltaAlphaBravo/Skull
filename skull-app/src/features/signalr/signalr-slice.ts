@@ -31,15 +31,10 @@ export const subscribeToTableAsync = createAsyncThunk(
 
 export const signalRSlice = createSlice<SignalRStatus, SliceCaseReducers<SignalRStatus>>({
   name: 'signalr',
-  reducers: { 
-    join: (state) => {
-      console.log("Hey");
-    }
-  },
+  reducers: { },
   extraReducers: (builder) => {
     builder
       .addCase(ensureSignalRConnectionAsync.fulfilled, (state, action) => {
-        console.log("reducer");
         state.isConnected = action.payload;
       });
   },

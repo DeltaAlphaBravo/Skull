@@ -12,7 +12,7 @@ const initalTableState: ILocalPlayer = {
 };
 
 export const localPlayerSlice = createSlice<ILocalPlayer, SliceCaseReducers<ILocalPlayer>>({
-  name: 'table',
+  name: 'local-player',
   reducers: {
     setName: (state, action) => {
       state.name = action.payload;
