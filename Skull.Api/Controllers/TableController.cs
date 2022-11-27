@@ -9,17 +9,19 @@ public class TableController : ControllerBase
 {
     private readonly ITableRepository _tableRepository;
     private readonly ISkullHub _skullHub;
+    private readonly ITableFactory _tableFactory;
 
-    public TableController(ITableRepository tableRepository, ISkullHub skullHub)
+    public TableController(ITableRepository tableRepository, ISkullHub skullHub, ITableFactory tableFactory)
     {
         _tableRepository = tableRepository;
         _skullHub = skullHub;
+        _tableFactory = tableFactory;
     }
 
     [HttpPost]
     public async Task<ActionResult<string>> StartTableAsync()
     {
-        var table = new Table("Booyah");
+        var table = _tableFactory.Create();
         await _tableRepository.SaveTableAsync(table);
         Response.Headers.Location = $"api/Table/{table.Name}";
         return new OkObjectResult($"\"{table.Name}\"");

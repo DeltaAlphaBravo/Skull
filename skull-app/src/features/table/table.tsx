@@ -1,7 +1,7 @@
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { selectIsConnected, ensureSignalRConnectionAsync, subscribeToTableAsync } from "../signalr/signalr-slice";
 import { SignalRService } from "../signalr/signalr-service";
-import { createTableAsync, getTableAsync, joinTableAsync, selectName, selectPlayers, setTableName } from "./table-slice";
+import { createTableAsync, getTableAsync, joinTableAsync, selectTableName, selectPlayers, setTableName } from "./table-slice";
 import { Player } from "./player";
 import useModal from "../modal/useModal";
 import { setName as setPlayerName } from "../localPlayer/local-player-slice";
@@ -11,7 +11,7 @@ import { useCallback } from "react";
 export function Table(props: { signalrService: SignalRService }): JSX.Element {
     const signalrService = props.signalrService
     const isSignalRConnected = useAppSelector(selectIsConnected);
-    const tableName = useAppSelector(selectName);
+    const tableName = useAppSelector(selectTableName);
     const players = useAppSelector(selectPlayers);
     const dispatch = useAppDispatch();
     const { isShowing: isShowingTable, toggle: toggleTable } = useModal();
@@ -51,12 +51,11 @@ export function Table(props: { signalrService: SignalRService }): JSX.Element {
         }
     }
 
-    const joinTable = (name: string) => {
+    const joinTable = (playerName: string, tableName: string) => {
         console.log("here");
-        name = name ?? "The Nameless One";
-        let tableName: string = "Booyah";
-        dispatch(joinTableAsync({ tableName: tableName, playerName: name }))
-            .then(() => dispatch(setPlayerName(name)));
+        playerName = playerName ?? "The Nameless One";
+        dispatch(joinTableAsync({ tableName: tableName, playerName: playerName }))
+            .then(() => dispatch(setPlayerName(playerName)));
     }
 
     const memoizedModal_StartTableOnClick = useCallback(() => startTable, []);
@@ -70,23 +69,32 @@ export function Table(props: { signalrService: SignalRService }): JSX.Element {
                     <Player key={player.playerId} value={player} />
                 )}
             </ul>
-            <button onClick={() => { toggleName(); }}>
+            <button onClick={() => { toggleName(); }}
+                    hidden = {!!tableName}>
                 Create Table
             </button>
             <button onClick={() => { toggleTable(); }}>
-                Join Table
+                Join {!!tableName ? "A Different" : ""} Table
+            </button>
+            <button onClick={() => {alert("Yup"); }} 
+                    hidden = {!tableName}>
+                Start Game
+            </button>
+            <button onClick={() => {alert("Yup"); }} 
+                    hidden = {!tableName}>
+                Leave Table
             </button>
             <StringModal
                 innerBody={<div>Join as ...</div>}
                 isShowing={isShowingPlayer}
-                ok={(name) => {
+                ok={(playerName) => {
                     if(tableName) {
                         console.log("join", tableName);
-                        memoizedModal_JoinTableOnClick()(name);
+                        memoizedModal_JoinTableOnClick()(playerName, tableName);
                     }
                     else {
                         console.log("create");
-                        memoizedModal_StartTableOnClick()(name);
+                        memoizedModal_StartTableOnClick()(playerName);
                     }
                     toggleName();
                 }}

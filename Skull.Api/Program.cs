@@ -12,6 +12,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IGameStateRepository, SingleGameInMemoryGameStateRepository>();
 builder.Services.AddSingleton<ITableRepository, SingleTableInMemoryTableRepository>();
+builder.Services.AddSingleton<ITableFactory>((ctx) => new TableFactory(File.ReadAllLines(".\\Lists\\adjectives.txt"), File.ReadAllLines(".\\Lists\\occupations.txt")));
 builder.Services.AddTransient<ISkullGame, SkullGame>();
 builder.Services.AddSignalR();
 builder.Services.AddSingleton<ISkullHub, SkullHub>();

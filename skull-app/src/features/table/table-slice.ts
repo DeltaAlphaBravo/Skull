@@ -8,6 +8,13 @@ const initalTableState: ITableView = {
   players: null,
 };
 
+export const leaveTableAsync = createAsyncThunk(
+  'table/leave',
+  async () => {
+    return;
+  }
+)
+
 export const createTableAsync = createAsyncThunk(
   'table/create',
   async () => {
@@ -42,6 +49,10 @@ export const tableSlice = createSlice<ITableView, SliceCaseReducers<ITableView>>
   },
   extraReducers: (builder) => {
     builder
+      .addCase(leaveTableAsync.fulfilled, (state, action) => {
+        state.name = null;
+        state.players = null;
+      })
       .addCase(createTableAsync.fulfilled, (state, action) => {
         state.name = action.payload || undefined;
       })
@@ -62,7 +73,7 @@ export const { setTableName } = tableSlice.actions;
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of
 // in the slice file. For example: `useSelector((state: RootState) => state.counter.value)`
-export const selectName = (state: RootState) => state.table.name;
+export const selectTableName = (state: RootState) => state.table.name;
 
 export const selectPlayers = (state: RootState) => state.table.players;
 
