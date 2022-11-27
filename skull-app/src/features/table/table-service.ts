@@ -5,9 +5,7 @@ export class TableService {
 
   private _client: Client = new Client(Config.api);
 
-  constructor() {
-
-  }
+  constructor() {}
 
   createTable(): Promise<string> {
     return this._client.tablePOST();

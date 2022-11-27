@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, SliceCaseReducers } from "@reduxjs/toolkit";
-import { createGame } from "./game-api";
+import { GameService } from "./game-service";
 
 export interface GameState {
   phase: string;
@@ -12,7 +12,7 @@ const initialGameState: GameState = {
 export const createGameAsync = createAsyncThunk(
   'game/start',
   async (tableName: string) => {
-    await createGame(tableName)
+    await new GameService().createGame(tableName)
       .catch((err) => console.log("Failed to create game", err));
   }
 )
