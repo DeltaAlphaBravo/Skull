@@ -14,7 +14,8 @@ export function Table(props: { signalrService: SignalRService }): JSX.Element {
     const tableName = useAppSelector(selectName);
     const players = useAppSelector(selectPlayers);
     const dispatch = useAppDispatch();
-    const { isShowing, toggle } = useModal();
+    const { isShowing: isShowingTable, toggle: toggleTable } = useModal();
+    const { isShowing: isShowingPlayer, toggle: toggleName } = useModal();
 
     const startTable = (name: string) => {
         let tableName: string;
@@ -39,7 +40,7 @@ export function Table(props: { signalrService: SignalRService }): JSX.Element {
             .then(() => dispatch(getTableAsync(name)))
             .then((response) => {
                 if (!response.payload) {
-                    toggle();
+                    toggleTable();
                     alert("Not found");
                 } else {
                     signalrService.OnPlayerJoin(() => dispatch(getTableAsync(name)))
@@ -47,7 +48,6 @@ export function Table(props: { signalrService: SignalRService }): JSX.Element {
             });
         if (tableName) {
             dispatch(setTableName(name));
-            // okButton = "joinTable";
         }
     }
 
@@ -55,26 +55,13 @@ export function Table(props: { signalrService: SignalRService }): JSX.Element {
         console.log("here");
         name = name ?? "The Nameless One";
         let tableName: string = "Booyah";
-        joinTableAsync({ tableName: tableName, playerName: name });
-        dispatch(setPlayerName(name));
+        dispatch(joinTableAsync({ tableName: tableName, playerName: name }))
+            .then(() => dispatch(setPlayerName(name)));
     }
 
-    let okButton: string = "nothing";
-
-    const memoizedModalOnClick = useCallback(
-        () => {
-            if (okButton === "startTable") {
-                return startTable;
-            } else if (okButton === "joinTable") {
-                return joinTable;
-            } else if (okButton === "findTable") {
-                return findTable;
-            } else {
-                return (name: string) => { }
-            }
-        },
-        [okButton]
-    );
+    const memoizedModal_StartTableOnClick = useCallback(() => startTable, []);
+    const memoizedModal_FindTableOnClick = useCallback(() => findTable, []);
+    const memoizedModal_JoinTableOnClick = useCallback(() => joinTable, []);
     return (
         <div>
             <div>{tableName}</div>
@@ -83,20 +70,37 @@ export function Table(props: { signalrService: SignalRService }): JSX.Element {
                     <Player key={player.playerId} value={player} />
                 )}
             </ul>
-            <button onClick={() => { okButton = "startTable"; toggle(); }}>
+            <button onClick={() => { toggleName(); }}>
                 Create Table
             </button>
-            <button onClick={() => { okButton = "findTable"; toggle(); }}>
+            <button onClick={() => { toggleTable(); }}>
                 Join Table
             </button>
             <StringModal
                 innerBody={<div>Join as ...</div>}
-                isShowing={isShowing}
+                isShowing={isShowingPlayer}
                 ok={(name) => {
-                    memoizedModalOnClick()(name);
-                    toggle();
+                    if(tableName) {
+                        console.log("join", tableName);
+                        memoizedModal_JoinTableOnClick()(name);
+                    }
+                    else {
+                        console.log("create");
+                        memoizedModal_StartTableOnClick()(name);
+                    }
+                    toggleName();
                 }}
-                cancel={toggle}
+                cancel={toggleName}
+            />
+            <StringModal
+                innerBody={<div>Find table ...</div>}
+                isShowing={isShowingTable}
+                ok={(name) => {
+                    memoizedModal_FindTableOnClick()(name);
+                    toggleTable();
+                    toggleName();
+                }}
+                cancel={toggleTable}
             />
         </div>
     );
