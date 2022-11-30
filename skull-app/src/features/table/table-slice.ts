@@ -11,6 +11,7 @@ const initalTableState: ITableView = {
 export const leaveTableAsync = createAsyncThunk(
   'table/leave',
   async () => {
+    //would need to remove the player from the api also.
     return;
   }
 )
@@ -54,10 +55,9 @@ export const tableSlice = createSlice<ITableView, SliceCaseReducers<ITableView>>
         state.players = null;
       })
       .addCase(createTableAsync.fulfilled, (state, action) => {
-        state.name = action.payload || undefined;
+        state.name = action.payload ?? null;
       })
       .addCase(getTableAsync.fulfilled, (state, action) => {
-        console.log(action.payload?.players);
         state.players = action.payload?.players;
         state.name = state.name ?? action.payload?.name;
       })

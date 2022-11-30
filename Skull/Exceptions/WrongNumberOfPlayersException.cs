@@ -3,7 +3,7 @@
 namespace Skull.Exceptions
 {
     [Serializable]
-    internal class WrongNumberOfPlayersException : Exception
+    public class WrongNumberOfPlayersException : Exception
     {
         public WrongNumberOfPlayersException()
         {

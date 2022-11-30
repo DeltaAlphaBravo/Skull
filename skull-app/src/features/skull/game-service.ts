@@ -1,4 +1,4 @@
-import { Client } from "../../api/skull-api";
+import { Client, IGamePlayerView } from "../../api/skull-api";
 import Config from "../../config.json";
 
 export class GameService {
@@ -9,5 +9,9 @@ export class GameService {
 
   createGame(tableName: string): Promise<void> {
     return this._client.game(tableName);
+  }
+
+  getGame(tableName: string, playerNumber: number): Promise<IGamePlayerView> {
+    return this._client.view(tableName, playerNumber);
   }
 }

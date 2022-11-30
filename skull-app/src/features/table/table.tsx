@@ -1,10 +1,10 @@
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { selectIsConnected, ensureSignalRConnectionAsync, subscribeToTableAsync } from "../signalr/signalr-slice";
 import { SignalRService } from "../signalr/signalr-service";
-import { createTableAsync, getTableAsync, joinTableAsync, selectTableName, selectPlayers, setTableName } from "./table-slice";
+import { createTableAsync, getTableAsync, joinTableAsync, selectTableName, selectPlayers, setTableName, leaveTableAsync } from "./table-slice";
 import { Player } from "./player";
 import useModal from "../modal/useModal";
-import { setName as setPlayerName } from "../localPlayer/local-player-slice";
+import { setId, setName as setPlayerName } from "../localPlayer/local-player-slice";
 import StringModal from "../modal/string-modal";
 import { useCallback } from "react";
 
@@ -31,7 +31,8 @@ export function Table(props: { signalrService: SignalRService }): JSX.Element {
             })
             .then(() => dispatch(subscribeToTableAsync({ table: tableName, signalRService: signalrService })))
             .then(() => signalrService.OnPlayerJoin(() => dispatch(getTableAsync(tableName))))
-            .then(() => dispatch(joinTableAsync({ tableName: tableName, playerName: name })));
+            .then(() => dispatch(joinTableAsync({ tableName: tableName, playerName: name })))
+            .then((result) => dispatch(setId(result.payload)));
     }
 
     const findTable = (name: string) => {
@@ -43,11 +44,12 @@ export function Table(props: { signalrService: SignalRService }): JSX.Element {
                     toggleTable();
                     alert("Not found");
                 } else {
-                    signalrService.OnPlayerJoin(() => dispatch(getTableAsync(name)))
+                    signalrService.OnPlayerJoin(() => dispatch(getTableAsync(name))
+                                                          .then(() => dispatch(setTableName(name))))
                 }
             });
         if (tableName) {
-            dispatch(setTableName(name));
+            
         }
     }
 
@@ -55,6 +57,7 @@ export function Table(props: { signalrService: SignalRService }): JSX.Element {
         console.log("here");
         playerName = playerName ?? "The Nameless One";
         dispatch(joinTableAsync({ tableName: tableName, playerName: playerName }))
+            .then((result) => dispatch(setId(result.payload)))
             .then(() => dispatch(setPlayerName(playerName)));
     }
 
@@ -73,29 +76,17 @@ export function Table(props: { signalrService: SignalRService }): JSX.Element {
                     hidden = {!!tableName}>
                 Create Table
             </button>
-            <button onClick={() => { toggleTable(); }}>
-                Join {!!tableName ? "A Different" : ""} Table
-            </button>
-            <button onClick={() => {alert("Yup"); }} 
-                    hidden = {!tableName}>
-                Start Game
-            </button>
-            <button onClick={() => {alert("Yup"); }} 
-                    hidden = {!tableName}>
-                Leave Table
+            <button onClick={() => { toggleTable(); }}
+                    hidden = {!!tableName}>
+                Join Table
             </button>
             <StringModal
                 innerBody={<div>Join as ...</div>}
                 isShowing={isShowingPlayer}
                 ok={(playerName) => {
-                    if(tableName) {
-                        console.log("join", tableName);
-                        memoizedModal_JoinTableOnClick()(playerName, tableName);
-                    }
-                    else {
-                        console.log("create");
-                        memoizedModal_StartTableOnClick()(playerName);
-                    }
+                    !!tableName 
+                        ? memoizedModal_JoinTableOnClick()(playerName, tableName)
+                        : memoizedModal_StartTableOnClick()(playerName)
                     toggleName();
                 }}
                 cancel={toggleName}

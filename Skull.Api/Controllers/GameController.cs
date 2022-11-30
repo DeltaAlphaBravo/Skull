@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Skull.Api.Models;
+using Skull.Exceptions;
 
 namespace Skull.Api.Controllers;
 
@@ -23,11 +24,18 @@ public class GameController : ControllerBase
     [Route("api/table/{tableName}/game")]
     public async Task<ActionResult> CreateNewGameAsync([FromRoute] string tableName)
     {
-        var table = await _tableRepository.GetTableAsync(tableName);
-        if (table == null) return new NotFoundResult();
-        var gameState = await _skullGame.StartGameAsync(table);
-        await _skullHub.NotifyGameStarted(tableName);
-        return new OkResult();
+        try
+        {
+            var table = await _tableRepository.GetTableAsync(tableName);
+            if (table == null) return new NotFoundResult();
+            var gameState = await _skullGame.StartGameAsync(table);
+            await _skullHub.NotifyGameStarted(tableName);
+            return new OkResult();
+        }
+        catch(WrongNumberOfPlayersException)
+        {
+            return new BadRequestResult();
+        }
     }
 
 

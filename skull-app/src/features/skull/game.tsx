@@ -1,35 +1,33 @@
-import { createGameAsync } from "./game-slice";
+import { createGameAsync, getGameAsync, selectPhase, selectView } from "./game-slice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { selectIsConnected, ensureSignalRConnectionAsync, subscribeToTableAsync } from "../signalr/signalr-slice";
 import { SignalRService } from "../signalr/signalr-service";
+import { selectPlayers, selectTableName } from "../table/table-slice";
+import { PlayerView } from "./playerView/player-view";
+import { selectId } from "../localPlayer/local-player-slice";
 
-export function Game(props: { name: string; }) {
-    const name = props.name;
+export function Game(props: { signalrService: SignalRService }): JSX.Element {
+    const signalrService = props.signalrService
     const isSignalRConnected = useAppSelector(selectIsConnected);
     const dispatch = useAppDispatch();
-    const signalrService: SignalRService = new SignalRService();
+    const tableName = useAppSelector(selectTableName); 
+    const phase = useAppSelector(selectPhase);
+    const playerNumber = useAppSelector(selectId);
+    const view = useAppSelector(selectView);
+
+    function StartGame() {
+        dispatch(createGameAsync(tableName ?? ""));
+        if(!tableName || !playerNumber) return;
+        dispatch(getGameAsync({tableName, playerNumber}));
+    }
+
     return (
         <div>
-            <div>{name}</div>
-            <button
-                onClick={
-                    () => {
-                        dispatch(createGameAsync(name))
-                            .then(async (result) => {
-                                console.log(isSignalRConnected);
-                                if (!isSignalRConnected) {
-                                    await dispatch(ensureSignalRConnectionAsync(signalrService));
-                                    return await Promise.resolve(result.payload as string);
-                                } else {
-                                    return Promise.resolve(result.payload as string);
-                                }
-                            })
-                            .then((gameName) => dispatch(subscribeToTableAsync({ table: gameName, signalRService: signalrService })));
-                    }
-                }
-            >
-                Create Game
+            <button onClick={StartGame} 
+                    hidden = { (tableName === null || tableName === undefined)}>
+                Start Game
             </button>
+            <PlayerView view={view!}/>
         </div>
     );
 }
