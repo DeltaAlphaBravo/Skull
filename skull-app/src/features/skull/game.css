@@ -1,0 +1,16 @@
+.game {
+    display: flex;
+    width: 100%;
+    align-items: stretch;
+    height: inherit;
+}
+
+.table-summary {
+    flex: 1;
+    border: 2px solid yellow;
+}
+
+.player-view {
+    flex: 5;
+    border: 2px solid yellow;
+}

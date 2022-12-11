@@ -4,12 +4,10 @@ import { RootState } from "../../app/store";
 import { GameService } from "./game-service";
 
 export interface GameState {
-  phase: string;
   view: IGamePlayerView | null;
 }
 
 const initialGameState: GameState = {
-  phase: "not started",
   view: null
 };
 
@@ -40,9 +38,6 @@ export const gameSlice = createSlice<GameState, SliceCaseReducers<GameState>>({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(createGameAsync.fulfilled, (state, action) => {
-        state.phase = "placement";
-      })
       .addCase(getGameAsync.fulfilled, (state, action) => {
         state.view = action.payload!;
       });
@@ -57,7 +52,7 @@ export const { } = gameSlice.actions;
 // the state. Selectors can also be defined inline where they're used instead of
 // in the slice file. For example: `useSelector((state: RootState) => state.counter.value)`
 // export const selectName = (state: RootState) => state.game.phase;
-export const selectPhase = (state: RootState) => state.game.phase;
+export const selectPhase = (state: RootState) => state.game.view?.phase;
 
 export const selectView = (state:RootState) => state.game.view;
 

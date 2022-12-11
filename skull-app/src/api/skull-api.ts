@@ -357,6 +357,7 @@ export interface IGamePlayerView {
     readonly opponentStates?: IOpponentState[] | null;
     hand?: IReadOnlyHand;
     readonly playedCoasters?: boolean[] | null;
+    readonly phase?: string | null;
 }
 
 export interface IOpponentHand {

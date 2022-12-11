@@ -2,7 +2,6 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { selectIsConnected, ensureSignalRConnectionAsync, subscribeToTableAsync } from "../signalr/signalr-slice";
 import { SignalRService } from "../signalr/signalr-service";
 import { createTableAsync, getTableAsync, joinTableAsync, selectTableName, selectPlayers, setTableName, leaveTableAsync } from "./table-slice";
-import { Player } from "./player";
 import useModal from "../modal/useModal";
 import { setId, setName as setPlayerName } from "../localPlayer/local-player-slice";
 import StringModal from "../modal/string-modal";
@@ -57,7 +56,6 @@ export function Table(props: { signalrService: SignalRService }): JSX.Element {
     }
 
     const joinTable = (playerName: string, tableName: string) => {
-        console.log("here");
         playerName = playerName ?? "The Nameless One";
         dispatch(joinTableAsync({ tableName: tableName, playerName: playerName }))
             .then((result) => dispatch(setId(result.payload)))
@@ -70,12 +68,6 @@ export function Table(props: { signalrService: SignalRService }): JSX.Element {
     const memoizedModal_JoinTableOnClick = useCallback(() => joinTable, []);
     return (
         <div>
-            <div>{tableName}</div>
-            <ul>
-                {players?.map((player) =>
-                    <Player key={player.playerId} value={player} />
-                )}
-            </ul>
             <button onClick={() => { toggleName(); }}
                     hidden = {!!tableName}>
                 Create Table

@@ -7,5 +7,6 @@
         IEnumerable<IOpponentState> OpponentStates { get; }
         IReadOnlyHand Hand { get; }
         Stack<bool> PlayedCoasters { get; }
+        string Phase { get; }
     }
 }

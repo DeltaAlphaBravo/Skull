@@ -14,6 +14,8 @@ namespace Skull.Api.Models
 
         public Stack<bool> PlayedCoasters { get; private init; }
 
+        public string Phase { get; init; }
+
         public GamePlayerView(IGameState gameState, int playerId)
         {
             PlayerId = playerId;
@@ -47,6 +49,7 @@ namespace Skull.Api.Models
             PlayedCoasters = gameState.PlayerStates.Where(h => h.PlayerId == playerId)
                                               .Select(h => new Stack<bool>(h.PlayedCoasters.Select(c => c == Coaster.Skull)))
                                               .Single();
+            Phase = gameState.Phase.ToString();
         }
     }
 }
