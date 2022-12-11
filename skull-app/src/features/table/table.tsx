@@ -7,6 +7,7 @@ import useModal from "../modal/useModal";
 import { setId, setName as setPlayerName } from "../localPlayer/local-player-slice";
 import StringModal from "../modal/string-modal";
 import { useCallback } from "react";
+import { useNavigate } from 'react-router-dom';
 
 export function Table(props: { signalrService: SignalRService }): JSX.Element {
     const signalrService = props.signalrService
@@ -14,6 +15,7 @@ export function Table(props: { signalrService: SignalRService }): JSX.Element {
     const tableName = useAppSelector(selectTableName);
     const players = useAppSelector(selectPlayers);
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
     const { isShowing: isShowingTable, toggle: toggleTable } = useModal();
     const { isShowing: isShowingPlayer, toggle: toggleName } = useModal();
 
@@ -32,7 +34,8 @@ export function Table(props: { signalrService: SignalRService }): JSX.Element {
             .then(() => dispatch(subscribeToTableAsync({ table: tableName, signalRService: signalrService })))
             .then(() => signalrService.OnPlayerJoin(() => dispatch(getTableAsync(tableName))))
             .then(() => dispatch(joinTableAsync({ tableName: tableName, playerName: name })))
-            .then((result) => dispatch(setId(result.payload)));
+            .then((result) => dispatch(setId(result.payload)))
+            .then(() => navigate(tableName));
     }
 
     const findTable = (name: string) => {
@@ -58,7 +61,8 @@ export function Table(props: { signalrService: SignalRService }): JSX.Element {
         playerName = playerName ?? "The Nameless One";
         dispatch(joinTableAsync({ tableName: tableName, playerName: playerName }))
             .then((result) => dispatch(setId(result.payload)))
-            .then(() => dispatch(setPlayerName(playerName)));
+            .then(() => dispatch(setPlayerName(playerName)))
+            .then(() => navigate(tableName));
     }
 
     const memoizedModal_StartTableOnClick = useCallback(() => startTable, []);

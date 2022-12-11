@@ -5,6 +5,7 @@ import { SignalRService } from "../signalr/signalr-service";
 import { selectPlayers, selectTableName } from "../table/table-slice";
 import { PlayerView } from "./playerView/player-view";
 import { selectId } from "../localPlayer/local-player-slice";
+import { Player } from "../table/player";
 
 export function Game(props: { signalrService: SignalRService }): JSX.Element {
     const signalrService = props.signalrService
@@ -14,6 +15,7 @@ export function Game(props: { signalrService: SignalRService }): JSX.Element {
     const phase = useAppSelector(selectPhase);
     const playerNumber = useAppSelector(selectId);
     const view = useAppSelector(selectView);
+    const players = useAppSelector(selectPlayers);
 
     function StartGame() {
         dispatch(createGameAsync(tableName ?? ""));
@@ -23,6 +25,12 @@ export function Game(props: { signalrService: SignalRService }): JSX.Element {
 
     return (
         <div>
+            <div>{tableName}</div>
+            <ul>
+                {players?.map((player) =>
+                    <Player key={player.playerId} value={player} />
+                )}
+            </ul>
             <button onClick={StartGame} 
                     hidden = { (tableName === null || tableName === undefined)}>
                 Start Game
