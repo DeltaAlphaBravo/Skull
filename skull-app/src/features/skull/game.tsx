@@ -1,4 +1,4 @@
-import { createGameAsync, getGameAsync, selectPhase, selectView } from "./game-slice";
+import { createGameAsync, getGameAsync, selectPhase, selectView, showCardPlayed } from "./game-slice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { selectIsConnected, subscribeToTableAsync } from "../signalr/signalr-slice";
 import { SignalRService } from "../signalr/signalr-service";
@@ -34,10 +34,13 @@ export function Game(props: { signalrService: SignalRService }): JSX.Element {
     }
 
     function StartGame() {
-        if(!tableName || !playerNumber) throw('tableName = ' + tableName + ' playerNumber = ' + playerNumber);
+        if(!tableName || playerNumber === null) throw('tableName = ' + tableName + ' playerNumber = ' + playerNumber);
         dispatch(createGameAsync(tableName ?? ""))
-        .then(
-            () => dispatch(getGameAsync({tableName, playerNumber})));
+        .then(() => dispatch(getGameAsync({tableName, playerNumber})))
+        .then( () => props.signalrService.OnGameStart(
+            (id) => {dispatch(showCardPlayed(id))},
+            (id, bid) => {}
+        ));
     }
 
     return (
@@ -47,7 +50,7 @@ export function Game(props: { signalrService: SignalRService }): JSX.Element {
                         hidden = { (tableName === null || tableName === undefined) || !!phase }>
                     Start Game
                 </button>
-                <PlayerView view={view!}/>
+                <PlayerView view={view!} tableName={tableName ?? ""}/>
             </div>
             <div className='table-summary'>
                 <div>{tableName}</div>

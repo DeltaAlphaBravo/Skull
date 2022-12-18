@@ -14,4 +14,8 @@ export class GameService {
   getGame(tableName: string, playerNumber: number): Promise<IGamePlayerView> {
     return this._client.view(tableName, playerNumber);
   }
+
+  playCard(tableName: string, playerNumber: number, card: boolean): Promise<IGamePlayerView> {
+    return this._client.stack(tableName, playerNumber, card);
+  }
 }

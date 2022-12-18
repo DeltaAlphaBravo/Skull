@@ -3,7 +3,7 @@
 namespace Skull.Exceptions
 {
     [Serializable]
-    internal class OutOfTurnException : Exception
+    public class OutOfTurnException : Exception
     {
         public OutOfTurnException()
         {

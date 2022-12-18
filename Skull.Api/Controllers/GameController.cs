@@ -60,6 +60,10 @@ public class GameController : ControllerBase
             await _skullHub.NotifyNewPlacement(tableName, player);
             return new OkObjectResult(new GamePlayerView(gameState, player));
         }
+        catch(OutOfTurnException)
+        {
+            return new BadRequestObjectResult("Not your turn");
+        }
         catch (InvalidOperationException)
         {
             return new BadRequestResult();
