@@ -27,6 +27,7 @@ export const createTableAsync = createAsyncThunk(
 export const getTableAsync = createAsyncThunk(
   'table/retrieve',
   async (tableName: string) => {
+    console.log("get table ", tableName);
     var table = await new TableService().getTable(tableName)
       .catch((err) => console.log("Failed to find table", err));
     return table
@@ -73,7 +74,7 @@ export const { setTableName } = tableSlice.actions;
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of
 // in the slice file. For example: `useSelector((state: RootState) => state.counter.value)`
-export const selectTableName = (state: RootState) => state.table.name;
+export const selectTableName = (state: RootState) => state.table?.name as string | null;
 
 export const selectPlayers = (state: RootState) => state.table.players;
 

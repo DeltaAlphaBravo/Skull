@@ -1,4 +1,4 @@
-import { IOpponentHand, IReadOnlyHand } from "../../../../api/skull-api";
+import { IOpponentHand } from "../../../../api/skull-api";
 
 export function OpponentHand(props: { hand: IOpponentHand | null }): JSX.Element {
     const cardCount = props.hand?.cardCount ?? 0;

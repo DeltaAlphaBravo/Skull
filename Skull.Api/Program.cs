@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.SignalR;
+using Serilog;
 using Skull;
 using Skull.Api;
 
@@ -16,6 +17,7 @@ builder.Services.AddSingleton<ITableFactory>((ctx) => new TableFactory(File.Read
 builder.Services.AddTransient<ISkullGame, SkullGame>();
 builder.Services.AddSignalR();
 builder.Services.AddSingleton<ISkullHub, SkullHub>();
+builder.Host.UseSerilog((ctx, lc) => lc.WriteTo.Console());
 
 var app = builder.Build();
 

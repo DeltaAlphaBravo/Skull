@@ -1,4 +1,4 @@
-import { configureStore, ThunkAction, Action, createListenerMiddleware, isAnyOf, getDefaultMiddleware } from '@reduxjs/toolkit';
+import { configureStore, ThunkAction, Action, createListenerMiddleware, isAnyOf } from '@reduxjs/toolkit';
 import { localPlayerReducer, setId, setName } from '../features/localPlayer/local-player-slice';
 import { signalRReducer } from '../features/signalr/signalr-slice';
 import { gameReducer } from '../features/skull/game-slice';

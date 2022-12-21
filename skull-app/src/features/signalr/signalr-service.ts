@@ -2,66 +2,87 @@ import { HttpTransportType, HubConnection, HubConnectionBuilder, IHttpConnection
 
 export class SignalRService {
     private _connection: HubConnection | null = null;
+    private _tableSubscription: string | null = null;
+    private _connected: boolean = false;
 
-    StartConnection(): Promise<boolean> {
-        const connectionHub = "https://localhost:55009";
-
-        const protocol = new JsonHubProtocol();
-        // let transport to fall back to to LongPolling if it needs to
-        const transport =
-            HttpTransportType.WebSockets | HttpTransportType.LongPolling;
-        const options: IHttpConnectionOptions = {
-            transport,
-            logMessageContent: true,
-            logger: LogLevel.Critical,
-            withCredentials: false,
-        };
-
-        // create the connection instance
-        this._connection = new HubConnectionBuilder()
-            .withUrl(`${connectionHub}/gameHub`, options)
-            .withHubProtocol(protocol)
-            .build();
-
-        //add "on" events here...
-        this._connection.on("ReceiveMessage", (message) => { console.log("happened", message); });
-
-        // re-establish the connection if connection dropped
-        this._connection.onclose(() =>
-            setTimeout(() => this.startSignalRConnection(this._connection!), 5000)
-        );
-
-        return this.startSignalRConnection(this._connection);
+    public get isConnected(): boolean {
+        return this._connected;
     }
 
-    OnPlayerJoin(callback: (name: string, id: number) => void): void {
+    public async startConnection(): Promise<boolean> {
+        if(this._connection === null){
+            const connectionHub = "https://localhost:55009";
+
+            const protocol = new JsonHubProtocol();
+            // let transport to fall back to to LongPolling if it needs to
+            const transport =
+                HttpTransportType.WebSockets | HttpTransportType.LongPolling;
+            const options: IHttpConnectionOptions = {
+                transport,
+                logMessageContent: true,
+                logger: LogLevel.Critical,
+                withCredentials: false,
+            };
+
+            // create the connection instance
+            this._connection = new HubConnectionBuilder()
+                .withUrl(`${connectionHub}/gameHub`, options)
+                .withHubProtocol(protocol)
+                .build();
+
+            // re-establish the connection if connection dropped
+            this._connection.onclose(() =>
+                setTimeout(() => this.startSignalRConnection(this._connection!), 5000)
+            );
+
+            return await this.startSignalRConnection(this._connection);
+        }
+        return new Promise<boolean>(function(resolve) {resolve(true)});
+    }
+
+    public OnPlayerJoin(
+        otherPlayerJoined: (name: string, id: number) => void,
+        ): void {
         if(!this._connection) throw("Not connected to SignalR");
-        this._connection.on("ReceiveNewPlayer", callback);
+        this._connection.on("ReceiveNewPlayer", otherPlayerJoined);
     }
 
-    OnGameStart(onCardPlaced: (id: number) => void, onBid: (id: number, bid: number) => void): void {
+    public OnGameEvents(
+        onStart: () => void,
+        onCardPlaced: (id: number) => void, 
+        onBid: (id: number, bid: number) => void
+    ){
         if(!this._connection) throw("Not connected to SignalR");
         this._connection.on("ReceiveNewPlacement", onCardPlaced);
         this._connection.on("ReceiveNewBid", onBid);
+        this._connection.on("ReceiveGameStart", onStart);
     }
 
-    async subscribeTo(table: string): Promise<boolean> {
-        if( this._connection == null) return Promise.resolve(false);
-        try {
-            await this._connection.invoke("SubscribeToNotificationsAsync", table);
+    public async subscribeTo(table: string, player: number): Promise<string | null> {
+        if(this._connection == null) return Promise.resolve(null);
+        let result = null;
+        await this._connection.invoke("SubscribeToNotificationsAsync", table, player)
+        .then(() => {
             console.log("joined ", table);
-            return true;
-        } catch (err) {
-            console.log(err);
-            return false;
-        }
+            this._tableSubscription = table;
+            result = table;
+        })
+        .catch((reason) => console.log(reason));
+        return result;
     }
 
-    private startSignalRConnection = (connection: HubConnection) =>
-        connection
+    public get subscribedTable(): string | null {
+        return this._tableSubscription;
+    }
+
+    public get connectionState(): string| null {return this._connection?.state ?? null;}
+
+    private startSignalRConnection = async (connection: HubConnection) =>
+        await connection
             .start()
             .then(() => {
                 console.info('SignalR Connected');
+                this._connected = true;
                 return true;
             })
             .catch((err: any) => {

@@ -1,71 +1,60 @@
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { selectIsConnected, ensureSignalRConnectionAsync, subscribeToTableAsync } from "../signalr/signalr-slice";
-import { SignalRService } from "../signalr/signalr-service";
-import { createTableAsync, getTableAsync, joinTableAsync, selectTableName, selectPlayers, setTableName, leaveTableAsync } from "./table-slice";
+import { createTableAsync, getTableAsync, joinTableAsync, selectTableName, selectPlayers, setTableName } from "./table-slice";
 import useModal from "../modal/useModal";
 import { setId, setName as setPlayerName } from "../localPlayer/local-player-slice";
 import StringModal from "../modal/string-modal";
 import { useCallback } from "react";
 import { useNavigate } from 'react-router-dom';
 
-export function Table(props: { signalrService: SignalRService }): JSX.Element {
-    const signalrService = props.signalrService
-    const isSignalRConnected = useAppSelector(selectIsConnected);
+export function Table(): JSX.Element {
     const tableName = useAppSelector(selectTableName);
-    const players = useAppSelector(selectPlayers);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const { isShowing: isShowingTable, toggle: toggleTable } = useModal();
     const { isShowing: isShowingPlayer, toggle: toggleName } = useModal();
 
     const startTable = (name: string) => {
-        let tableName: string;
         name = name ?? "The Nameless One";
+        let table = "";
+        let id = -1;
         dispatch(setPlayerName(name));
         dispatch(createTableAsync())
-            .then(async (result) => {
-                console.log(isSignalRConnected);
-                if (!isSignalRConnected) {
-                    await dispatch(ensureSignalRConnectionAsync(signalrService));
-                }
-                tableName = result.payload as string;
+            .then((result) => table = result.payload as string)
+            .then(() => dispatch(joinTableAsync({ tableName: table, playerName: name })))
+            .then((result) => {
+                 dispatch(setId(result.payload))
+                 id = result.payload as number;
             })
-            .then(() => dispatch(subscribeToTableAsync({ table: tableName, signalRService: signalrService })))
-            .then(() => signalrService.OnPlayerJoin(() => dispatch(getTableAsync(tableName))))
-            .then(() => dispatch(joinTableAsync({ tableName: tableName, playerName: name })))
-            .then((result) => dispatch(setId(result.payload)))
-            .then(() => navigate(tableName));
+            .then(() => navigate(table));
     }
 
     const findTable = (name: string) => {
-        dispatch(ensureSignalRConnectionAsync(signalrService))
-            .then(() => dispatch(subscribeToTableAsync({ table: name, signalRService: signalrService })))
-            .then(() => dispatch(getTableAsync(name)))
+            dispatch(getTableAsync(name))
+            .then(() => dispatch(setTableName(name)))
             .then((response) => {
                 if (!response.payload) {
                     toggleTable();
                     alert("Not found");
                 } else {
-                    signalrService.OnPlayerJoin(() => dispatch(getTableAsync(name))
-                                                          .then(() => dispatch(setTableName(name))))
+                    // signalrService.OnPlayerJoin(
+                    //     () => dispatch(getTableAsync(name)))
                 }
             });
-        if (tableName) {
-            
-        }
     }
 
     const joinTable = (playerName: string, tableName: string) => {
         playerName = playerName ?? "The Nameless One";
+        
         dispatch(joinTableAsync({ tableName: tableName, playerName: playerName }))
-            .then((result) => dispatch(setId(result.payload)))
-            .then(() => dispatch(setPlayerName(playerName)))
-            .then(() => navigate(tableName));
+        .then((result) => dispatch(setId(result.payload)))
+        .then(() => dispatch(setPlayerName(playerName)))
+        .then(() => navigate(tableName));
     }
 
     const memoizedModal_StartTableOnClick = useCallback(() => startTable, []);
     const memoizedModal_FindTableOnClick = useCallback(() => findTable, []);
     const memoizedModal_JoinTableOnClick = useCallback(() => joinTable, []);
+
     return (
         <div>
             <button onClick={() => { toggleName(); }}
