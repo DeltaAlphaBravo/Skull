@@ -64,7 +64,7 @@ export function Game(props: { signalrService: SignalRService }): JSX.Element {
                         hidden = { (tableName === null || tableName === undefined) || !!phase }>
                     Start Game
                 </button>
-                <PlayerView view={view!} tableName={tableName ?? ""}/>
+                <PlayerView view={view!} tableName={tableName ?? ""} players={players!}/>
             </div>
             <div className='table-summary'>
                 <div>{tableName}</div>

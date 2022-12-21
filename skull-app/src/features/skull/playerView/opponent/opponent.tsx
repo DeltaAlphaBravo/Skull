@@ -2,10 +2,10 @@ import { IOpponentState } from "../../../../api/skull-api";
 import { OpponentHand } from "./opponent-hand";
 import { OpponentStack } from "./opponent-stack";
 
-export function Opponent(props: { opponent: IOpponentState | null }): JSX.Element {
+export function Opponent(props: { opponent: IOpponentState | null, name: string }): JSX.Element {
     return (
         <div>
-            Player {props.opponent?.playerId}
+            {props.name}
             <OpponentHand hand={props?.opponent?.hand ?? null}/>
             <OpponentStack count={props.opponent?.stackCount ?? null}/>
         </div>
