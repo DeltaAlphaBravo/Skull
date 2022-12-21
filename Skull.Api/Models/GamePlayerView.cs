@@ -16,6 +16,8 @@ namespace Skull.Api.Models
 
         public string Phase { get; init; }
 
+        public IEnumerable<IPlayerBid> Bids { get; init; }
+
         public GamePlayerView(IGameState gameState, int playerId)
         {
             PlayerId = playerId;
@@ -50,6 +52,9 @@ namespace Skull.Api.Models
                                               .Select(h => new Stack<bool>(h.PlayedCoasters.Select(c => c == Coaster.Skull)))
                                               .Single();
             Phase = gameState.Phase.ToString();
+            Bids = gameState.Phase != GamesState.Phase.Placement 
+                   ? gameState.Bids.Select(b => new PlayerBid() { Bid = b.CardsToReveal, PlayerId = b.PlayerId })
+                   : Array.Empty<IPlayerBid>();
         }
     }
 }

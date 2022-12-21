@@ -358,6 +358,7 @@ export interface IGamePlayerView {
     hand?: IReadOnlyHand;
     readonly playedCoasters?: boolean[] | null;
     readonly phase?: string | null;
+    readonly bids?: IPlayerBid[] | null;
 }
 
 export interface IOpponentHand {
@@ -374,6 +375,11 @@ export interface IOpponentState {
 export interface IPlayer {
     readonly name?: string | null;
     readonly playerId?: number;
+}
+
+export interface IPlayerBid {
+    bid?: number | null;
+    playerId?: number;
 }
 
 export interface IReadOnlyHand {

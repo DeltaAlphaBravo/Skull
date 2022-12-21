@@ -8,5 +8,6 @@
         IReadOnlyHand Hand { get; }
         Stack<bool> PlayedCoasters { get; }
         string Phase { get; }
+        IEnumerable<IPlayerBid> Bids { get; }
     }
 }
