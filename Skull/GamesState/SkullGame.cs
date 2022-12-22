@@ -1,4 +1,5 @@
-﻿using Skull.GamesState;
+﻿using Skull.Exceptions;
+using Skull.GamesState;
 using Skull.Phases;
 
 namespace Skull
@@ -40,6 +41,7 @@ namespace Skull
         {
             var gameState = await _repository.GetGameStateAsync(tableName);
             if (gameState == null) throw new Exceptions.GameNotFoundException();
+            if (gameState.PlayerStates.Any(p => p.PlayedCoasters.Count == 0)) throw new WrongPhaseException("Player hasn't played a coaster yet");
             if (gameState.Phase == Phase.Placement) gameState.GoToNextPhase();
             if (gameState.Phase != Phase.Challenge) throw new Exceptions.WrongPhaseException();
 
