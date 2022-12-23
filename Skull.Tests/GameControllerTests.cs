@@ -79,6 +79,7 @@ namespace Skull.Tests
 
             //Assert
             Assert.AreEqual(Phase.Reveal, (await repository.GetGameStateAsync(TableName))!.Phase);
+            Assert.AreEqual(currentPlayer, firstPlayer);
         }
 
         private static async Task<(SkullGame, IGameState)> CreateNPlayerGameAsync(string tableName, int n, IGameStateRepository gameStateRepository)
