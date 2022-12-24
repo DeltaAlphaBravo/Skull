@@ -16,7 +16,7 @@ namespace Skull
         public async Task<IGameState> StartGameAsync(ITable table)
         {
             var playerCount = table.Players.Count;
-            if (playerCount is < 3 or > 6) throw new Exceptions.WrongNumberOfPlayersException();
+            if (playerCount is < 3 or > 6) throw new WrongNumberOfPlayersException();
             var gameState = new GameState(playerCount);
             await _repository.SaveGameStateAsync(table.Name, gameState);
             return gameState;
@@ -40,10 +40,10 @@ namespace Skull
         public async Task<IGameState> MakeBidAsync(string tableName, int player, int? cardsToReveal)
         {
             var gameState = await _repository.GetGameStateAsync(tableName);
-            if (gameState == null) throw new Exceptions.GameNotFoundException();
+            if (gameState == null) throw new GameNotFoundException();
             if (gameState.PlayerStates.Any(p => p.PlayedCoasters.Count == 0)) throw new WrongPhaseException("Player hasn't played a coaster yet");
             if (gameState.Phase == Phase.Placement) gameState.GoToNextPhase();
-            if (gameState.Phase != Phase.Challenge) throw new Exceptions.WrongPhaseException();
+            if (gameState.Phase != Phase.Challenge) throw new WrongPhaseException();
 
             var game = ChallengePhase.CreateFromState(gameState);
             gameState = game.MakeBid(player, cardsToReveal);
@@ -52,11 +52,29 @@ namespace Skull
             return gameState;
         }
 
+        public async Task<IGameState> RevealCoasterAsync(string tableName, int playerStack)
+        {
+            var gameState = await _repository.GetGameStateAsync(tableName);
+            if (gameState == null) throw new GameNotFoundException();
+            if (gameState.Phase != Phase.Reveal) throw new WrongPhaseException("Not in Reveal phase");
+
+            gameState.Reveals.Push(playerStack);
+            var coaster = gameState.PlayerStates[playerStack].PlayedCoasters.Pop();
+            if (coaster == Coaster.Skull || gameState.Reveals.Count == gameState.Bids.Select(b => b.CardsToReveal).Max())
+            {
+                if (coaster == Coaster.Skull) gameState.HandleLoss();
+                if (coaster == Coaster.Flower) gameState.HandleVictory();
+                gameState.GoToNextPhase();
+            }
+            await _repository.SaveGameStateAsync(tableName, gameState);
+            return gameState;
+        }
+
         private async Task<IGameState> GetGameStateValidForPhase(string tableName, Phase phase)
         {
             var gameState = await _repository.GetGameStateAsync(tableName);
-            if (gameState == null) throw new Exceptions.GameNotFoundException();
-            if (gameState.Phase != phase) throw new Exceptions.WrongPhaseException();
+            if (gameState == null) throw new GameNotFoundException();
+            if (gameState.Phase != phase) throw new WrongPhaseException();
             return gameState;
         }
 

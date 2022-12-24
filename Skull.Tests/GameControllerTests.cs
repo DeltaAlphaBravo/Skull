@@ -82,6 +82,29 @@ namespace Skull.Tests
             Assert.AreEqual(currentPlayer, firstPlayer);
         }
 
+        [TestMethod]
+        public async Task GivenRevealPhase_WhenPlayerRevealsChallenge_ThenCompletePhaseBegins()
+        {
+            //Arrange
+            const string TableName = "Test";
+            var repository = new SingleGameInMemoryGameStateRepository();
+            var (target, gameState) = await CreateNPlayerGameAsync(TableName, 3, repository);
+
+            var firstPlayer = gameState.NextPlayer;
+            for (int i = firstPlayer; i < firstPlayer + 3; i++) await target.PlaceCoasterAsync(TableName, i % 3, false);
+            var currentPlayer = (await target.MakeBidAsync(TableName, firstPlayer, 3))!.NextPlayer;
+
+            //Act
+            for (int i = firstPlayer; i < firstPlayer + 3; i++) await target.RevealCoasterAsync(TableName, i % 3);
+            var finalGameState = (await repository.GetGameStateAsync(TableName))!;
+            //TODO: Have to pull from your own stack first.
+
+
+            //Assert
+            Assert.AreEqual(Phase.Complete, (await repository.GetGameStateAsync(TableName))!.Phase);
+            Assert.IsTrue(finalGameState.PlayerStates[currentPlayer].HasWonAGame);
+        }
+
         private static async Task<(SkullGame, IGameState)> CreateNPlayerGameAsync(string tableName, int n, IGameStateRepository gameStateRepository)
         {
             var table = new Table(tableName);

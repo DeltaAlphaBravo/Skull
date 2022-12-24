@@ -8,7 +8,9 @@ namespace Skull.GamesState.Player
         IHand Hand { get; }
         Stack<Coaster> PlayedCoasters { get; }
         int? CardsToReveal { get; }
+        bool HasWonAGame { get; }
         IPlayerState PlaySkull();
         IPlayerState PlayFlower();
+        IPlayerState RecordVictory();
     }
 }

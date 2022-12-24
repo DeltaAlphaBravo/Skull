@@ -14,12 +14,15 @@ internal sealed class GameState : IGameState
 
     public Stack<IBid> Bids { get; private init; }
 
+    public Stack<int> Reveals { get; private init; }
+
     public GameState(int playerCount)
     {
         _players = Enumerable.Range(0, playerCount)
                              .Select(y => new PlayerState(y))
                              .ToList<IPlayerState>();
         Bids = new Stack<IBid>();
+        Reveals = new Stack<int>();
         Phase = Phase.Placement;
         RandomNextPlayer();
     }
@@ -43,5 +46,15 @@ internal sealed class GameState : IGameState
         if (Phase == Phase.Challenge) Phase = Phase.Reveal;
         if (Phase == Phase.Placement) Phase = Phase.Challenge;
         return Phase;
+    }
+
+    public void HandleVictory()
+    {
+        PlayerStates[NextPlayer].RecordVictory();
+    }
+
+    public void HandleLoss()
+    {
+        throw new NotImplementedException();
     }
 }

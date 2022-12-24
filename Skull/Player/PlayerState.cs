@@ -13,6 +13,8 @@ namespace Skull.GamesState.Player
 
         public int? CardsToReveal { get; private set; }
 
+        public bool HasWonAGame { get; private set; }
+
         public PlayerState(int playerId)
         {
             PlayerId = playerId;
@@ -35,6 +37,12 @@ namespace Skull.GamesState.Player
             if (Hand.CardCount < 1)
                 throw new InvalidOperationException($"Player {PlayerId} tried to play a flower, but has no cards");
             return PlayCard(Coaster.Flower);
+        }
+
+        public IPlayerState RecordVictory()
+        {
+            HasWonAGame = true;
+            return this;
         }
 
         private IPlayerState PlayCard(Coaster coaster)

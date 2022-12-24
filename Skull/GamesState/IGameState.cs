@@ -9,7 +9,10 @@ namespace Skull.GamesState
         int NextPlayer { get; }
         Phase Phase { get; }
         Stack<IBid> Bids { get; }
+        Stack<int> Reveals { get; }
         int GoToNextPlayer();
         Phase GoToNextPhase();
+        void HandleVictory();
+        void HandleLoss();
     }
 }
