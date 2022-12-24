@@ -30,7 +30,7 @@ export interface IClient {
      * @param body (optional) 
      * @return Success
      */
-    challenge(tableName: string, player: number, body: number | undefined): Promise<IGamePlayerView>;
+    challenges(tableName: string, body: PlayerBid | undefined): Promise<IGamePlayerView>;
 
     /**
      * @return Success
@@ -188,14 +188,11 @@ export class Client implements IClient {
      * @param body (optional) 
      * @return Success
      */
-    challenge(tableName: string, player: number, body: number | undefined): Promise<IGamePlayerView> {
-        let url_ = this.baseUrl + "/api/table/{tableName}/player/{player}/challenge";
+    challenges(tableName: string, body: PlayerBid | undefined): Promise<IGamePlayerView> {
+        let url_ = this.baseUrl + "/api/table/{tableName}/challenges";
         if (tableName === undefined || tableName === null)
             throw new Error("The parameter 'tableName' must be defined.");
         url_ = url_.replace("{tableName}", encodeURIComponent("" + tableName));
-        if (player === undefined || player === null)
-            throw new Error("The parameter 'player' must be defined.");
-        url_ = url_.replace("{player}", encodeURIComponent("" + player));
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -210,11 +207,11 @@ export class Client implements IClient {
         };
 
         return this.http.fetch(url_, options_).then((_response: Response) => {
-            return this.processChallenge(_response);
+            return this.processChallenges(_response);
         });
     }
 
-    protected processChallenge(response: Response): Promise<IGamePlayerView> {
+    protected processChallenges(response: Response): Promise<IGamePlayerView> {
         const status = response.status;
         let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
         if (status === 200) {
@@ -391,6 +388,11 @@ export interface IReadOnlyHand {
 export interface ITableView {
     readonly name?: string | null;
     readonly players?: IPlayer[] | null;
+}
+
+export interface PlayerBid {
+    playerId?: number;
+    bid?: number | null;
 }
 
 export class ApiException extends Error {

@@ -71,15 +71,15 @@ public class GameController : ControllerBase
     }
 
     [HttpPost]
-    [Route("api/table/{tableName}/player/{player}/challenge")]
-    public async Task<ActionResult<IGamePlayerView>> MakeBidAsync([FromRoute] string tableName, [FromRoute] int player, [FromBody] int? bid)
+    [Route("api/table/{tableName}/challenges")]
+    public async Task<ActionResult<IGamePlayerView>> MakeBidAsync([FromRoute] string tableName, [FromBody] PlayerBid bid)
     {
         try
         {
-            var gameState = await _skullGame.MakeBidAsync(tableName, player, bid);
+            var gameState = await _skullGame.MakeBidAsync(tableName, bid.PlayerId, bid.Bid);
             if (gameState == null) return new NotFoundResult();
-            await _skullHub.NotifyNewBid(tableName, player, bid);
-            return new OkObjectResult(new GamePlayerView(gameState, player));
+            await _skullHub.NotifyNewBid(tableName, bid.PlayerId, bid.Bid);
+            return new OkObjectResult(new GamePlayerView(gameState, bid.PlayerId));
         }
         catch (InvalidOperationException)
         {

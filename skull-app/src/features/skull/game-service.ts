@@ -1,4 +1,4 @@
-import { Client, IGamePlayerView } from "../../api/skull-api";
+import { Client, IGamePlayerView, IPlayerBid } from "../../api/skull-api";
 import Config from "../../config.json";
 
 export class GameService {
@@ -20,6 +20,6 @@ export class GameService {
   }
 
   makeBid(tableName: string, playerNumber: number, bid: number | null): Promise<IGamePlayerView> {
-    return this._client.challenge(tableName, playerNumber, bid === null ? undefined : bid);
+    return this._client.challenges(tableName, {playerId: playerNumber, bid: bid});
   }
 }
