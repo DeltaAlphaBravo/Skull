@@ -38,6 +38,15 @@ export const playCardAsync = createAsyncThunk(
   }
 )
 
+export const makeBidAsync = createAsyncThunk(
+  'game/make-bid',
+ async ({tableName, playerNumber, bid}: {tableName: string, playerNumber: number, bid: number | null}) => {
+  const gameService = new GameService();
+    return await gameService.makeBid(tableName, playerNumber, bid)
+      .catch((err) => console.log("Failed to make bid", tableName, playerNumber, bid, err));
+ }
+)
+
 export const gameSlice = createSlice<GameState, SliceCaseReducers<GameState>>({
   name: 'game',
   reducers: {

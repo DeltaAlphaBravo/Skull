@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { createTableAsync, getTableAsync, joinTableAsync, selectTableName, selectPlayers, setTableName } from "./table-slice";
+import { createTableAsync, getTableAsync, joinTableAsync, selectTableName, setTableName } from "./table-slice";
 import useModal from "../modal/useModal";
 import { setId, setName as setPlayerName } from "../localPlayer/local-player-slice";
 import StringModal from "../modal/string-modal";
@@ -16,21 +16,19 @@ export function Table(): JSX.Element {
     const startTable = (name: string) => {
         name = name ?? "The Nameless One";
         let table = "";
-        let id = -1;
         dispatch(setPlayerName(name));
         dispatch(createTableAsync())
             .then((result) => table = result.payload as string)
             .then(() => dispatch(joinTableAsync({ tableName: table, playerName: name })))
             .then((result) => {
                  dispatch(setId(result.payload))
-                 id = result.payload as number;
             })
             .then(() => navigate(table));
     }
 
     const findTable = (name: string) => {
-            dispatch(getTableAsync(name))
-            .then(() => dispatch(setTableName(name)))
+            dispatch(getTableAsync(name.trim()))
+            .then(() => dispatch(setTableName(name.trim())))
             .then((response) => {
                 if (!response.payload) {
                     toggleTable();

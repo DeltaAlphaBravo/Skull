@@ -18,4 +18,8 @@ export class GameService {
   playCard(tableName: string, playerNumber: number, card: boolean): Promise<IGamePlayerView> {
     return this._client.stack(tableName, playerNumber, card);
   }
+
+  makeBid(tableName: string, playerNumber: number, bid: number | null): Promise<IGamePlayerView> {
+    return this._client.challenge(tableName, playerNumber, bid === null ? undefined : bid);
+  }
 }
