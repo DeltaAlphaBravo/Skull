@@ -4,7 +4,7 @@ import { Opponent } from "./opponent/opponent";
 import { PlayerHand } from "./player-hand";
 
 export function PlayerView(props: { view: IGamePlayerView | null, tableName: string, players: IPlayer[] }): JSX.Element {
-    const myTurn = props.view !== null && (props.view!.nextPlayer === props.view!.playerId);
+    const myTurn = !!props.view && (props.view.nextPlayer === props.view!.playerId);
     const opponents = props.view?.opponentStates?.map(o => 
             <Opponent opponent={o} key={o.playerId}
                       name={props.players?.find(p => p.playerId === o.playerId)?.name!}
