@@ -8,5 +8,6 @@ namespace Skull.Api
         Task NotifyGameStarted(string table);
         Task NotifyNewPlacement(string table, int playerId);
         Task NotifyNewBid(string table, int playerId, int? bid);
+        Task NotifyNewReveal(string table, int playerId, bool isSkull);
     }
 }

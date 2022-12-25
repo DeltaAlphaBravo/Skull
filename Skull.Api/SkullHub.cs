@@ -47,6 +47,11 @@ namespace Skull.Api
             await _hubContext.Clients.Group(table).SendAsync("ReceiveNewBid", playerId, bid);
         }
 
+        public async Task NotifyNewReveal(string table, int playerId, bool isSkull)
+        {
+            await _hubContext.Clients.Group(table).SendAsync("ReceiveNewReveal", playerId, isSkull);
+        }
+
         private record TablePlayerPair
         {
             public string Table { init; get; } = string.Empty;

@@ -8,5 +8,6 @@ namespace Skull
         Task<IGameState?> GetGameStateAsync(string tableName);
         Task<IGameState> MakeBidAsync(string tableName, int player, int? cardsToReveal);
         Task<IGameState> PlaceCoasterAsync(string tableName, int player, bool isSkull);
+        Task<IGameState> RevealCoasterAsync(string tableName, int playerStack);
     }
 }

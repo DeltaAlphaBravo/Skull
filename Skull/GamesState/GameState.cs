@@ -14,7 +14,7 @@ internal sealed class GameState : IGameState
 
     public Stack<IBid> Bids { get; private init; }
 
-    public Stack<int> Reveals { get; private init; }
+    public Stack<IRevealedCoaster> Reveals { get; private init; }
 
     public GameState(int playerCount)
     {
@@ -22,7 +22,7 @@ internal sealed class GameState : IGameState
                              .Select(y => new PlayerState(y))
                              .ToList<IPlayerState>();
         Bids = new Stack<IBid>();
-        Reveals = new Stack<int>();
+        Reveals = new Stack<IRevealedCoaster>();
         Phase = Phase.Placement;
         RandomNextPlayer();
     }

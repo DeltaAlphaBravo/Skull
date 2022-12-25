@@ -58,8 +58,8 @@ namespace Skull
             if (gameState == null) throw new GameNotFoundException();
             if (gameState.Phase != Phase.Reveal) throw new WrongPhaseException("Not in Reveal phase");
 
-            gameState.Reveals.Push(playerStack);
             var coaster = gameState.PlayerStates[playerStack].PlayedCoasters.Pop();
+            gameState.Reveals.Push(new RevealedCoaster { PlayerId = playerStack, IsSkull = coaster == Coaster.Skull});
             if (coaster == Coaster.Skull || gameState.Reveals.Count == gameState.Bids.Select(b => b.CardsToReveal).Max())
             {
                 if (coaster == Coaster.Skull) gameState.HandleLoss();
