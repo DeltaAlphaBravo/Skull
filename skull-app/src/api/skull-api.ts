@@ -33,6 +33,12 @@ export interface IClient {
     challenges(tableName: string, body: PlayerBid | undefined): Promise<IGamePlayerView>;
 
     /**
+     * @param body (optional) 
+     * @return Success
+     */
+    reveals(tableName: string, body: PlayerBid | undefined): Promise<IGamePlayerView>;
+
+    /**
      * @return Success
      */
     tablePOST(): Promise<string>;
@@ -229,6 +235,50 @@ export class Client implements IClient {
     }
 
     /**
+     * @param body (optional) 
+     * @return Success
+     */
+    reveals(tableName: string, body: PlayerBid | undefined): Promise<IGamePlayerView> {
+        let url_ = this.baseUrl + "/api/table/{tableName}/reveals";
+        if (tableName === undefined || tableName === null)
+            throw new Error("The parameter 'tableName' must be defined.");
+        url_ = url_.replace("{tableName}", encodeURIComponent("" + tableName));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_: RequestInit = {
+            body: content_,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "text/plain"
+            }
+        };
+
+        return this.http.fetch(url_, options_).then((_response: Response) => {
+            return this.processReveals(_response);
+        });
+    }
+
+    protected processReveals(response: Response): Promise<IGamePlayerView> {
+        const status = response.status;
+        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
+        if (status === 200) {
+            return response.text().then((_responseText) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as IGamePlayerView;
+            return result200;
+            });
+        } else if (status !== 200 && status !== 204) {
+            return response.text().then((_responseText) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            });
+        }
+        return Promise.resolve<IGamePlayerView>(null as any);
+    }
+
+    /**
      * @return Success
      */
     tablePOST(): Promise<string> {
@@ -367,6 +417,7 @@ export interface IOpponentState {
     readonly playerId?: number;
     hand?: IOpponentHand;
     readonly stackCount?: number;
+    readonly reveals?: boolean[] | null;
 }
 
 export interface IPlayer {

@@ -50,12 +50,14 @@ export class SignalRService {
     public OnGameEvents(
         onStart: () => void,
         onCardPlaced: (id: number) => void, 
-        onBid: (id: number, bid: number) => void
+        onBid: (id: number, bid: number) => void,
+        onReveal: (id: number, isSkull: boolean) => void,
     ){
         if(!this._connection) throw("Not connected to SignalR");
         this._connection.on("ReceiveNewPlacement", onCardPlaced);
         this._connection.on("ReceiveNewBid", onBid);
         this._connection.on("ReceiveGameStart", onStart);
+        this._connection.on("ReceiveNewReveal", onReveal);
     }
 
     public async subscribeTo(table: string, player: number): Promise<string | null> {

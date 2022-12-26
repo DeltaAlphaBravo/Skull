@@ -57,8 +57,19 @@ export const gameSlice = createSlice<GameState, SliceCaseReducers<GameState>>({
       const opponent = state.view?.opponentStates?.find((o) => o.playerId === action.payload);
       opponent!.hand!.cardCount!-=1;
       opponent!.stackCount!+=1;
-      console.log("Played", opponent?.playerId)
-    }
+      console.log("Played", opponent?.playerId);
+    },
+    showReveal: (state, action) => {
+      if(state.view?.nextPlayer === state.view?.playerId) {
+        state.view?.playedCoasters?.pop()
+      } else {
+        let opponent = state.view!.opponentStates!.find((o) => o.playerId === action.payload.playerId);
+        if(opponent?.stackCount === undefined) throw('why no opponent?' + action.payload.playerId)
+        opponent.stackCount-=1;
+        opponent.reveals?.push(action.payload.isSkull);
+      }
+      console.log("Revealed", action);
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -72,7 +83,7 @@ export const gameSlice = createSlice<GameState, SliceCaseReducers<GameState>>({
   initialState: initialGameState
 });
 
-export const { showCardPlayed } = gameSlice.actions;
+export const { showCardPlayed, showReveal } = gameSlice.actions;
 
 
 // The function below is called a selector and allows us to select a value from

@@ -10,8 +10,11 @@
         {
             PlayerId = playerId;
             Hand = hand;
+            Reveals = new List<bool>();
         }
 
         public int StackCount { get; init; }
+
+        public IEnumerable<bool> Reveals { get; init; }
     }
 }
