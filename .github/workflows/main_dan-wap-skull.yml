@@ -46,6 +46,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: .net-app
+          path: ~/api
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
@@ -54,4 +55,4 @@ jobs:
           app-name: 'dan-wap-skull'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_A489E6D7DA6F488E9E443436816E4C44 }}
-          package: .
+          package: ~/api
