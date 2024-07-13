@@ -54,9 +54,11 @@ namespace Skull
 
         public async Task<IGameState> RevealCoasterAsync(string tableName, int playerStack)
         {
-            var gameState = await _repository.GetGameStateAsync(tableName);
-            if (gameState == null) throw new GameNotFoundException();
+            var gameState = await _repository.GetGameStateAsync(tableName) ?? throw new GameNotFoundException();
             if (gameState.Phase != Phase.Reveal) throw new WrongPhaseException("Not in Reveal phase");
+
+            if(playerStack != gameState.NextPlayer && gameState.PlayerStates[gameState.NextPlayer].PlayedCoasters.Any())
+                throw new OutOfTurnException("You have to reveal your own first");
 
             var coaster = gameState.PlayerStates[playerStack].PlayedCoasters.Pop();
             gameState.Reveals.Push(new RevealedCoaster { PlayerId = playerStack, IsSkull = coaster == Coaster.Skull});

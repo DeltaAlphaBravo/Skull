@@ -22,4 +22,8 @@ export class GameService {
   makeBid(tableName: string, playerNumber: number, bid: number | null): Promise<IGamePlayerView> {
     return this._client.challenges(tableName, {playerId: playerNumber, bid: bid});
   }
+
+  reveal(tableName: string, stackNumber: number): Promise<IGamePlayerView> {
+    return this._client.reveals(tableName, stackNumber);
+  }
 }

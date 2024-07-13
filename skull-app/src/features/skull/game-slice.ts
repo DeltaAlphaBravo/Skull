@@ -47,6 +47,15 @@ export const makeBidAsync = createAsyncThunk(
  }
 )
 
+export const revealCardAsync = createAsyncThunk(
+  'game/reveal-card',
+  async ({tableName, playerNumber}: {tableName: string, playerNumber: number}) => {
+    const gameService = new GameService();
+    return await gameService.reveal(tableName, playerNumber)
+      .catch((err) => console.log("Failed to reveal card", tableName, playerNumber));
+  }
+)
+
 export const gameSlice = createSlice<GameState, SliceCaseReducers<GameState>>({
   name: 'game',
   reducers: {
@@ -77,6 +86,9 @@ export const gameSlice = createSlice<GameState, SliceCaseReducers<GameState>>({
         state.view = action.payload!;
       })
       .addCase(playCardAsync.fulfilled, (state, action) => {
+        state.view = action.payload!;
+      })
+      .addCase(revealCardAsync.fulfilled, (state, action) => {
         state.view = action.payload!;
       })
   },

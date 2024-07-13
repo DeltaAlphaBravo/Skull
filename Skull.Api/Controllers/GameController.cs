@@ -89,14 +89,14 @@ public class GameController : ControllerBase
 
     [HttpPost]
     [Route("api/table/{tableName}/reveals")]
-    public async Task<ActionResult<IGamePlayerView>> RevealCoasterAsync([FromRoute] string tableName, [FromBody] PlayerBid bid)
+    public async Task<ActionResult<IGamePlayerView>> RevealCoasterAsync([FromRoute] string tableName, [FromBody] int playerId)
     {
         try
         {
-            var gameState = await _skullGame.RevealCoasterAsync(tableName, bid.PlayerId);
+            var gameState = await _skullGame.RevealCoasterAsync(tableName, playerId);
             if (gameState == null) return new NotFoundResult();
-            await _skullHub.NotifyNewReveal(tableName, bid.PlayerId, gameState.Reveals.Peek().IsSkull);
-            return new OkObjectResult(new GamePlayerView(gameState, bid.PlayerId));
+            await _skullHub.NotifyNewReveal(tableName, playerId, gameState.Reveals.Peek().IsSkull);
+            return new OkObjectResult(new GamePlayerView(gameState, playerId));
         }
         catch (InvalidOperationException)
         {

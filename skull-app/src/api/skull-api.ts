@@ -36,7 +36,7 @@ export interface IClient {
      * @param body (optional) 
      * @return Success
      */
-    reveals(tableName: string, body: PlayerBid | undefined): Promise<IGamePlayerView>;
+    reveals(tableName: string, body: number | undefined): Promise<IGamePlayerView>;
 
     /**
      * @return Success
@@ -238,7 +238,7 @@ export class Client implements IClient {
      * @param body (optional) 
      * @return Success
      */
-    reveals(tableName: string, body: PlayerBid | undefined): Promise<IGamePlayerView> {
+    reveals(tableName: string, body: number | undefined): Promise<IGamePlayerView> {
         let url_ = this.baseUrl + "/api/table/{tableName}/reveals";
         if (tableName === undefined || tableName === null)
             throw new Error("The parameter 'tableName' must be defined.");
