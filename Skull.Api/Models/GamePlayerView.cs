@@ -13,6 +13,7 @@ namespace Skull.Api.Models
         public IReadOnlyHand Hand { get; init; }
 
         public Stack<bool> PlayedCoasters { get; private init; }
+        public IEnumerable<bool> Reveals { get; private init; }
 
         public string Phase { get; init; }
 
@@ -44,13 +45,15 @@ namespace Skull.Api.Models
                                                        {
                                                            
                                                            StackCount = p.PlayedCoasters.Count(),
-                                                           PlayerId = p.PlayerId
+                                                           PlayerId = p.PlayerId,
+                                                           Reveals = gameState.Reveals.Where(r => r.PlayerId == p.PlayerId).Select(r => r.IsSkull)
                                                        };
                                                    })
                                                    .ToList();
             PlayedCoasters = gameState.PlayerStates.Where(h => h.PlayerId == playerId)
                                               .Select(h => new Stack<bool>(h.PlayedCoasters.Select(c => c == Coaster.Skull)))
                                               .Single();
+            Reveals = gameState.Reveals.Where(r => r.PlayerId == playerId).Select(r => r.IsSkull);
             Phase = gameState.Phase.ToString();
             Bids = gameState.Phase != GamesState.Phase.Placement 
                    ? gameState.Bids.Select(b => new PlayerBid() { Bid = b.CardsToReveal, PlayerId = b.PlayerId })

@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice, SliceCaseReducers } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction, SliceCaseReducers } from "@reduxjs/toolkit";
 import { IGamePlayerView } from "../../api/skull-api";
 import { RootState } from "../../app/store";
 import { GameService } from "./game-service";
@@ -68,17 +68,6 @@ export const gameSlice = createSlice<GameState, SliceCaseReducers<GameState>>({
       opponent!.stackCount!+=1;
       console.log("Played", opponent?.playerId);
     },
-    showReveal: (state, action) => {
-      if(state.view?.nextPlayer === state.view?.playerId) {
-        state.view?.playedCoasters?.pop()
-      } else {
-        let opponent = state.view!.opponentStates!.find((o) => o.playerId === action.payload.playerId);
-        if(opponent?.stackCount === undefined) throw('why no opponent?' + action.payload.playerId)
-        opponent.stackCount-=1;
-        opponent.reveals?.push(action.payload.isSkull);
-      }
-      console.log("Revealed", action);
-    },
   },
   extraReducers: (builder) => {
     builder
@@ -95,7 +84,7 @@ export const gameSlice = createSlice<GameState, SliceCaseReducers<GameState>>({
   initialState: initialGameState
 });
 
-export const { showCardPlayed, showReveal } = gameSlice.actions;
+export const { showCardPlayed } = gameSlice.actions;
 
 
 // The function below is called a selector and allows us to select a value from

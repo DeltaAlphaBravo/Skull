@@ -7,6 +7,7 @@
         IEnumerable<IOpponentState> OpponentStates { get; }
         IReadOnlyHand Hand { get; }
         Stack<bool> PlayedCoasters { get; }
+        public IEnumerable<bool> Reveals { get; }
         string Phase { get; }
         IEnumerable<IPlayerBid> Bids { get; }
     }

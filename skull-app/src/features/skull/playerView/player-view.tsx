@@ -12,7 +12,7 @@ export function PlayerView(props: { view: IGamePlayerView | null, tableName: str
                       name={props.players?.find(p => p.playerId === o.playerId)?.name!}
                       bid={props.view?.bids?.find(b => b.playerId === o.playerId)?.bid ?? null}
                       revealEnabled={props.view!.phase!.toLowerCase() === 'reveal' && myTurn && (props.view?.playedCoasters?.length ?? -1) === 0}/>)
-    
+    let reveals = Array.from(props.view?.reveals ?? []).map((a, idx) => <span key={idx}>{a ? "Skull" : "Flower"} </span>);
     return (
         <div hidden={!props.view?.phase}>
             <PlayerHand 
@@ -20,13 +20,14 @@ export function PlayerView(props: { view: IGamePlayerView | null, tableName: str
                 tableName={props.tableName} 
                 acceptPlay={myTurn && props.view?.phase?.toLowerCase() === 'placement'}
             />
-            <div hidden={!myTurn || props.view!.phase!.toLowerCase() === "reveal"}>
+            <div hidden={!myTurn || props.view!.phase!.toLowerCase() !== "placement"}>
                 <Bid view={props.view} tableName={props.tableName}/>
             </div>
             <Stack tableName={props.tableName}
                    playerId = {props.view?.playerId ?? -1}
                    cardCount = {props.view?.playedCoasters?.length ?? -1}
                    revealEnabled = {props.view?.phase?.toLowerCase() === 'reveal' && myTurn}/>
+            {reveals}
             {opponents}
         </div>
     );
